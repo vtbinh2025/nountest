@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noun Master - Fill in the Blanks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; overflow-x: hidden; }
+        .main-wrapper { height: 100vh; display: flex; flex-direction: column; padding: 0.75rem; max-width: 1400px; margin: 0 auto; }
+        .quiz-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; flex-grow: 1; overflow-y: auto; padding-right: 5px; }
+        .quiz-item:last-child:nth-child(odd) { grid-column: span 2; }
+        .explanation { display: none; margin-top: 6px; padding: 8px; background: #f8fafc; border-left: 3px solid #6366f1; border-radius: 4px; font-size: 0.75rem; }
+        .token-tag { display: inline-block; padding: 1px 5px; border-radius: 4px; font-size: 9px; font-weight: 700; text-transform: uppercase; margin: 1px; }
+        input:disabled { background-color: #f8fafc; cursor: not-allowed; border-color: #e2e8f0; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="text-slate-900">
+
+    <div class="main-wrapper">
+        <header class="flex justify-between items-center mb-3 bg-white p-3 rounded-xl shadow-sm border border-slate-200">
+            <div>
+                <h1 class="text-lg font-bold text-indigo-900 leading-tight">Luyện từ vựng Không đếm được Số ít, Đếm được Số nhiều theo ngữ cảnh</h1>
+                <p class="text-slate-500 text-[10px]">Chỉ điền từ còn thiếu vào chỗ trống để tiết kiệm thời gian.</p>
+            </div>
+            <div class="flex gap-2 text-[11px] font-bold">
+                <div class="bg-indigo-50 px-3 py-1 rounded-lg text-indigo-700 border border-indigo-100">
+                    Thành thạo: <span id="mastered-count">0</span>/100
+                </div>
+                <div class="bg-emerald-50 px-3 py-1 rounded-lg text-emerald-700 border border-emerald-100">
+                    Đúng: <span id="avg-score">0</span>%
+                </div>
+            </div>
+        </header>
+
+        <div id="quiz-area" class="quiz-grid"></div>
+
+        <footer class="mt-3 bg-white p-3 rounded-xl shadow-md border border-slate-200">
+            <div class="flex items-center justify-between">
+                <div id="session-info" class="text-indigo-800 font-bold text-xs"></div>
+                <div class="flex gap-2">
+                    <button onclick="generateTest()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-xs font-bold transition-all">🔄 5 câu mới</button>
+                    <button onclick="checkAnswers()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg text-xs font-bold shadow-lg transition-all active:scale-95">✅ Kiểm tra đáp án</button>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const bank = [
+            { id: 1, q: "I need some ___ to write my notes on.", a: "paper", p: "(Paper: Giấy [U] / Tờ báo [C])", e: "Dùng với nghĩa vật liệu giấy để viết nên không đếm được." },
+            { id: 2, q: "I bought a ___ to read on the train.", a: "paper", p: "(Paper: Giấy [U] / Tờ báo [C])", e: "'A paper' có nghĩa là một tờ báo." },
+            { id: 3, q: "The window is made of ___.", a: "glass", p: "(Glass: Thủy tinh [U] / Cái ly [C])", e: "Thủy tinh là vật liệu nên không có 'a/an' hay số nhiều." },
+            { id: 4, q: "He drank a ___ of water.", a: "glass", p: "(Glass: Thủy tinh [U] / Cái ly [C])", e: "Ở đây chỉ đơn vị cái ly nên dùng số ít 'glass'." },
+            { id: 5, q: "This job requires five years of ___.", a: "experience", p: "(Experience: Kinh nghiệm [U] / Trải nghiệm [C])", e: "Kinh nghiệm tích lũy trong công việc là không đếm được." },
+            { id: 6, q: "It was an unforgettable ___ for me.", a: "experience", p: "(Experience: Kinh nghiệm [U] / Trải nghiệm [C])", e: "Chỉ một sự kiện cụ thể đã trải qua nên đếm được." },
+            { id: 7, q: "The gate is made of heavy ___.", a: "iron", p: "(Iron: Sắt [U] / Bàn là [C])", e: "Sắt (kim loại) không đếm được." },
+            { id: 8, q: "She is using an ___ to smooth her shirt.", a: "iron", p: "(Iron: Sắt [U] / Bàn là [C])", e: "'An iron' là một cái bàn là." },
+            { id: 9, q: "I don't have enough ___ to finish this.", a: "time", p: "(Time: Thời gian [U] / Số lần [C])", e: "Thời gian nói chung không đếm được." },
+            { id: 10, q: "I have visited Paris three ___.", a: "times", p: "(Time: Thời gian [U] / Số lần [C])", e: "Times ở đây nghĩa là số lần, dùng số nhiều." },
+            { id: 11, q: "I have too much ___ to do today.", a: "work", p: "(Work: Công việc [U] / Tác phẩm [C])", e: "Công việc nói chung không đếm được." },
+            { id: 12, q: "These are the ___ of Shakespeare.", a: "works", p: "(Work: Công việc [U] / Tác phẩm [C])", e: "Works mang nghĩa là các tác phẩm (văn học, nghệ thuật)." },
+            { id: 13, q: "___ is slow this month.", a: "Business", p: "(Business: Việc kinh doanh [U] / Công ty [C])", e: "Việc buôn bán nói chung là không đếm được." },
+            { id: 14, q: "He owns two small ___.", a: "businesses", p: "(Business: Việc kinh doanh [U] / Công ty [C])", e: "Các cơ sở kinh doanh/công ty là đếm được." },
+            { id: 15, q: "There is not enough ___ in this room.", a: "light", p: "(Light: Ánh sáng [U] / Đèn [C])", e: "Ánh sáng không đếm được." },
+            { id: 16, q: "Turn off all the ___ before leaving.", a: "lights", p: "(Light: Ánh sáng [U] / Đèn [C])", e: "Số nhiều chỉ các thiết bị chiếu sáng (đèn)." },
+            { id: 17, q: "She has long, beautiful black ___.", a: "hair", p: "(Hair: Tóc [U] / Sợi tóc [C])", e: "Tóc trên đầu được coi là một khối không đếm được." },
+            { id: 18, q: "There are two ___ in my soup!", a: "hairs", p: "(Hair: Tóc [U] / Sợi tóc [C])", e: "Sợi tóc rời rạc có thể đếm được." },
+            { id: 19, q: "There is no ___ for another person.", a: "room", p: "(Room: Chỗ trống [U] / Căn phòng [C])", e: "Room nghĩa là không gian trống (không đếm được)." },
+            { id: 20, q: "This house has four ___.", a: "rooms", p: "(Room: Chỗ trống [U] / Căn phòng [C])", e: "Căn phòng đếm được." },
+            { id: 21, q: "Could you give me some ___?", a: "advice", p: "(Advice: Lời khuyên [U])", e: "Không bao giờ dùng 'advices'." },
+            { id: 22, q: "We need more ___ about the project.", a: "information", p: "(Information: Thông tin [U])", e: "Information luôn ở dạng số ít không đếm được." },
+            { id: 23, q: "The ___ was delivered yesterday.", a: "furniture", p: "(Furniture: Nội thất [U])", e: "Nội thất là danh từ không đếm được." },
+            { id: 24, q: "Your ___ is very heavy.", a: "luggage", p: "(Luggage: Hành lý [U])", e: "Hành lý không đếm được (tương tự baggage)." },
+            { id: 25, q: "The ___ is bad today.", a: "weather", p: "(Weather: Thời tiết [U])", e: "Không đếm được, không dùng 'a weather'." },
+            { id: 26, q: "They have modern ___.", a: "equipment", p: "(Equipment: Thiết bị [U])", e: "Không bao giờ dùng 'equipments'." },
+            { id: 27, q: "The ___ is very heavy today.", a: "traffic", p: "(Traffic: Giao thông [U])", e: "Giao thông không đếm được." },
+            { id: 28, q: "I have a lot of ___ tonight.", a: "homework", p: "(Homework: Bài tập [U])", e: "Tuyệt đối không dùng 'homeworks'." },
+            { id: 29, q: "The ___ is shocking.", a: "news", p: "(News: Tin tức [U])", e: "News luôn dùng động từ số ít." },
+            { id: 30, q: "I bought two loaves of ___.", a: "bread", p: "(Bread: Bánh mì [U])", e: "Bread không đếm được, đếm qua 'loaf' hoặc 'slice'." },
+            { id: 31, q: "He drank two ___ of water.", a: "glasses", p: "(Glass: Cái ly [C])", e: "Số nhiều của glass (cái ly)." },
+            { id: 32, q: "I need some ___ for the fire.", a: "wood", p: "(Wood: Gỗ [U] / Khu rừng [C])", e: "Gỗ (vật liệu) không đếm được." },
+            { id: 33, q: "We walked through the ___.", a: "woods", p: "(Wood: Gỗ [U] / Khu rừng [C])", e: "The woods là khu rừng nhỏ (số nhiều)." },
+            { id: 34, q: "I love listening to ___.", a: "music", p: "(Music: Âm nhạc [U])", e: "Âm nhạc không đếm được." },
+            { id: 35, q: "You are making great ___.", a: "progress", p: "(Progress: Tiến bộ [U])", e: "Tiến bộ không đếm được." },
+            { id: 36, q: "___ is power.", a: "knowledge", p: "(Knowledge: Kiến thức [U])", e: "Kiến thức không đếm được." },
+            { id: 37, q: "The ___ was amazing.", a: "scenery", p: "(Scenery: Phong cảnh [U])", e: "Không dùng 'sceneries'." },
+            { id: 38, q: "She has a lot of ___.", a: "jewelry", p: "(Jewelry: Trang sức [U])", e: "Trang sức nói chung không đếm được." },
+            { id: 39, q: "___ is necessary for life.", a: "water", p: "(Water: Nước [U])", e: "Chất lỏng không đếm được." },
+            { id: 40, q: "He lacks ___.", a: "confidence", p: "(Confidence: Tự tin [U])", e: "Danh từ trừu tượng." },
+            { id: 41, q: "I like the ___ of this room.", a: "space", p: "(Space: Không gian [U])", e: "Không gian không đếm được." },
+            { id: 42, q: "___ is very sweet.", a: "honey", p: "(Honey: Mật ong [U])", e: "Mật ong không đếm được." },
+            { id: 43, q: "They found a lot of ___.", a: "gold", p: "(Gold: Vàng [U])", e: "Kim loại quý không đếm được." },
+            { id: 44, q: "Silence ___ golden.", a: "is", p: "(S-V Agreement với danh từ không đếm được)", e: "Danh từ không đếm được dùng động từ số ít." },
+            { id: 45, q: "I need some ___ to fix this.", a: "oil", p: "(Oil: Dầu [U])", e: "Chất lỏng không đếm được." },
+            { id: 46, q: "The ___ in the city is fresh.", a: "air", p: "(Air: Không khí [U])", e: "Không khí không đếm được." },
+            { id: 47, q: "He eats a lot of ___.", a: "rice", p: "(Rice: Gạo/Cơm [U])", e: "Gạo không đếm được." },
+            { id: 48, q: "Beauty ___ in the eyes.", a: "is", p: "(Beauty: Vẻ đẹp [U])", e: "Vẻ đẹp là danh từ trừu tượng." },
+            { id: 49, q: "I heard a loud ___.", a: "noise", p: "(Noise: Tiếng ồn [U] / Tiếng động [C])", e: "Một tiếng động cụ thể là đếm được." },
+            { id: 50, q: "There is too much ___ here.", a: "noise", p: "(Noise: Tiếng ồn [U] / Tiếng động [C])", e: "Sự ồn ào nói chung không đếm được." },
+            { id: 51, q: "I need a ___ of advice.", a: "piece", p: "(Counting Uncountable nouns)", e: "Dùng 'piece' để đếm lời khuyên." },
+            { id: 52, q: "Two ___ of bread, please.", a: "slices", p: "(Counting Bread)", e: "Dùng 'slices' để đếm lát bánh mì." },
+            { id: 53, q: "The ___ is melting.", a: "ice", p: "(Ice: Băng/Đá [U])", e: "Băng không đếm được." },
+            { id: 54, q: "I enjoy doing ___ with them.", a: "business", p: "(Business: Việc kinh doanh [U])", e: "Việc làm ăn không đếm được." },
+            { id: 55, q: "This cake has too much ___.", a: "sugar", p: "(Sugar: Đường [U])", e: "Đường không đếm được." },
+            { id: 56, q: "Patience ___ a virtue.", a: "is", p: "(Patience: Kiên nhẫn [U])", e: "Sự kiên nhẫn chia số ít." },
+            { id: 57, q: "Freedom ___ not free.", a: "is", p: "(Freedom: Tự do [U])", e: "Danh từ trừu tượng." },
+            { id: 58, q: "His ___ is very deep.", a: "sadness", p: "(Sadness: Nỗi buồn [U])", e: "Danh từ trừu tượng." },
+            { id: 59, q: "The ___ is very expensive.", a: "meat", p: "(Meat: Thịt [U])", e: "Thịt nói chung không đếm được." },
+            { id: 60, q: "I love drinking ___.", a: "tea", p: "(Tea: Trà [U])", e: "Đồ uống không đếm được." },
+            { id: 61, q: "I saw three ___ in the park.", a: "men", p: "(Man - số nhiều bất quy tắc)", e: "Số nhiều của man là men." },
+            { id: 62, q: "My ___ are tired.", a: "feet", p: "(Foot - số nhiều bất quy tắc)", e: "Số nhiều của foot là feet." },
+            { id: 63, q: "How many ___ are there?", a: "children", p: "(Child - số nhiều bất quy tắc)", e: "Số nhiều của child là children." },
+            { id: 64, q: "The ___ are running away.", a: "mice", p: "(Mouse - số nhiều bất quy tắc)", e: "Số nhiều của mouse là mice." },
+            { id: 65, q: "He has two ___.", a: "teeth", p: "(Tooth - số nhiều bất quy tắc)", e: "Số nhiều của tooth là teeth." },
+            { id: 66, q: "The ___ are grazing.", a: "sheep", p: "(Sheep - số ít/nhiều như nhau)", e: "Sheep không thêm 's' ở số nhiều." },
+            { id: 67, q: "I caught two ___.", a: "fish", p: "(Fish - số ít/nhiều như nhau)", e: "Thường dùng fish cho cả số ít và nhiều." },
+            { id: 68, q: "These ___ are beautiful.", a: "women", p: "(Woman - số nhiều bất quy tắc)", e: "Số nhiều của woman là women." },
+            { id: 69, q: "There are many ___ in the sea.", a: "species", p: "(Species - số ít/nhiều như nhau)", e: "Species luôn có 's'." },
+            { id: 70, q: "This ___ is very fast.", a: "aircraft", p: "(Aircraft - số ít/nhiều như nhau)", e: "Không dùng 'aircrafts'." },
+            { id: 71, q: "He told me a ___.", a: "story", p: "(Story - đếm được)", e: "Một câu chuyện." },
+            { id: 72, q: "I have a ___.", a: "dream", p: "(Dream - đếm được)", e: "Một giấc mơ." },
+            { id: 73, q: "The ___ is blue.", a: "sky", p: "(Sky - thường dùng số ít)", e: "Bầu trời." },
+            { id: 74, q: "He has a lot of ___.", a: "power", p: "(Power: Quyền lực [U])", e: "Quyền lực không đếm được." },
+            { id: 75, q: "The ___ is hot.", a: "soup", p: "(Soup: Súp [U])", e: "Món nước không đếm được." },
+            { id: 76, q: "I need some ___.", a: "help", p: "(Help: Giúp đỡ [U])", e: "Không dùng 'helps'." },
+            { id: 77, q: "The ___ is shining.", a: "sun", p: "(Duy nhất)", e: "Mặt trời." },
+            { id: 78, q: "Give me some ___.", a: "salt", p: "(Muối/Gia vị [U])", e: "Muối không đếm được." },
+            { id: 79, q: "I want a ___ of chocolate.", a: "bar", p: "(Counting Chocolate)", e: "Dùng 'bar' (thanh) để đếm socola." },
+            { id: 80, q: "___ is very important.", a: "education", p: "(Education: Giáo dục [U])", e: "Danh từ trừu tượng." },
+            { id: 81, q: "I have two ___.", a: "brothers", p: "(Brother - đếm được)", e: "Anh em trai đếm được." },
+            { id: 82, q: "The ___ is green.", a: "grass", p: "(Grass: Cỏ [U])", e: "Cỏ không đếm được." },
+            { id: 83, q: "He lacks ___.", a: "courage", p: "(Courage: Dũng cảm [U])", e: "Không đếm được." },
+            { id: 84, q: "There is some ___ in the bottle.", a: "milk", p: "(Milk: Sữa [U])", e: "Chất lỏng không đếm được." },
+            { id: 85, q: "The ___ is very old.", a: "building", p: "(Building - đếm được)", e: "Tòa nhà đếm được." },
+            { id: 86, q: "I have an ___.", a: "idea", p: "(Idea - đếm được)", e: "Một ý tưởng." },
+            { id: 87, q: "The ___ was very difficult.", a: "exam", p: "(Exam - đếm được)", e: "Kỳ thi đếm được." },
+            { id: 88, q: "He drank a cup of ___.", a: "coffee", p: "(Coffee: Cà phê [U])", e: "Dùng 'cup' để đếm cà phê." },
+            { id: 89, q: "I like ___.", a: "cheese", p: "(Cheese: Phô mai [U])", e: "Phô mai không đếm được." },
+            { id: 90, q: "The ___ is flowing.", a: "river", p: "(River - đếm được)", e: "Con sông đếm được." },
+            { id: 91, q: "They have a lot of ___.", a: "luck", p: "(Luck: May mắn [U])", e: "May mắn không đếm được." },
+            { id: 92, q: "The ___ is very bright.", a: "moon", p: "(Duy nhất)", e: "Mặt trăng." },
+            { id: 93, q: "I see a ___.", a: "star", p: "(Star - đếm được)", e: "Ngôi sao đếm được." },
+            { id: 94, q: "___ is dangerous.", a: "fire", p: "(Fire: Lửa [U] / Vụ cháy [C])", e: "Lửa nói chung không đếm được." },
+            { id: 95, q: "There were two ___ last night.", a: "fires", p: "(Fire: Lửa [U] / Vụ cháy [C])", e: "Hai vụ cháy cụ thể là đếm được." },
+            { id: 96, q: "I love ___.", a: "nature", p: "(Nature: Thiên nhiên [U])", e: "Thiên nhiên không đếm được." },
+            { id: 97, q: "The ___ is coming.", a: "rain", p: "(Rain: Mưa [U])", e: "Mưa không đếm được." },
+            { id: 98, q: "He has a ___.", a: "car", p: "(Car - đếm được)", e: "Ô tô đếm được." },
+            { id: 99, q: "I need some ___.", a: "money", p: "(Money: Tiền [U])", e: "Tiền không đếm được." },
+            { id: 100, q: "The ___ is sweet.", a: "fruit", p: "(Fruit: Trái cây [U])", e: "Fruit thường dùng như danh từ không đếm được." }
+        ];
+
+        let stats = JSON.parse(localStorage.getItem('noun_fill_stats')) || {};
+        bank.forEach(q => { if(!stats[q.id]) stats[q.id] = { seen: 0, best: 0 } });
+
+        let currentQ = [];
+
+        function generateTest() {
+            const area = document.getElementById('quiz-area');
+            area.innerHTML = '';
+            
+            // Ưu tiên câu điểm thấp
+            let sorted = bank.map(q => ({ q, score: stats[q.id].best }))
+                             .sort((a,b) => a.score - b.score);
+            
+            currentQ = sorted.slice(0, 15).sort(() => Math.random() - 0.5).slice(0, 5).map(x => x.q);
+
+            currentQ.forEach((q, i) => {
+                area.insertAdjacentHTML('beforeend', `
+                    <div class="quiz-item bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[9px] font-bold text-indigo-400">CÂU ${i+1}</span>
+                            <span id="pill-${i}" class="px-2 py-0.5 rounded bg-slate-100 text-slate-400 text-[9px] font-bold uppercase">Chờ</span>
+                        </div>
+                        <p class="text-[12px] font-bold text-slate-700 leading-tight">${q.q}</p>
+                        <p class="text-[10px] text-indigo-500 font-medium italic mb-2">${q.p}</p>
+                        <input type="text" id="input-${i}" spellcheck="false" autocomplete="off"
+                            class="w-full p-2 rounded-lg border border-slate-200 outline-none text-[12px] font-bold focus:border-indigo-500 transition-all" 
+                            placeholder="Điền từ đúng vào đây...">
+                        <div id="exp-${i}" class="explanation"></div>
+                    </div>
+                `);
+            });
+            updateHeader();
+        }
+
+        function checkAnswers() {
+            let correctCount = 0;
+            currentQ.forEach((q, i) => {
+                const input = document.getElementById(`input-${i}`);
+                const userVal = input.value.trim().toLowerCase();
+                const targetVal = q.a.toLowerCase();
+                
+                let isCorrect = (userVal === targetVal);
+                if(isCorrect) correctCount++;
+
+                stats[q.id].seen++;
+                let score = isCorrect ? 1 : 0;
+                if(score > stats[q.id].best) stats[q.id].best = score;
+
+                const pill = document.getElementById(`pill-${i}`);
+                pill.innerText = isCorrect ? "ĐÚNG" : "SAI";
+                pill.className = `px-2 py-0.5 rounded text-[9px] font-bold ${isCorrect ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`;
+                
+                input.classList.add(isCorrect ? 'border-emerald-500' : 'border-rose-400');
+
+                const exp = document.getElementById(`exp-${i}`);
+                exp.innerHTML = `
+                    <div class="font-bold text-indigo-700 mb-1 text-[11px]">Đáp án: ${q.a}</div>
+                    <div class="italic text-slate-500 text-[10px]">${q.e}</div>
+                `;
+                exp.style.display = 'block';
+                input.disabled = true;
+            });
+            localStorage.setItem('noun_fill_stats', JSON.stringify(stats));
+            document.getElementById('session-info').innerText = `Lượt này đúng: ${correctCount}/5`;
+            updateHeader();
+        }
+
+        function updateHeader() {
+            const mastered = Object.values(stats).filter(s => s.best === 1).length;
+            document.getElementById('mastered-count').innerText = mastered;
+            const totalSeen = Object.values(stats).filter(s => s.seen > 0).length;
+            const avg = totalSeen > 0 ? (mastered / totalSeen) * 100 : 0;
+            document.getElementById('avg-score').innerText = Math.round(avg);
+        }
+
+        generateTest();
+    </script>
+</body>
+</html>
