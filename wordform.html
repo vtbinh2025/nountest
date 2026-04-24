@@ -2,47 +2,43 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Trắc Nghiệm Word Form - Ngân Hàng PDF</title>
+    <title>Trắc Nghiệm Word Form - Thứ Tự Mới</title>
     <style>
-        body { font-family: sans-serif; line-height: 1.6; padding: 20px; background: #f4f4f9; }
-        .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #2c3e50; }
-        .word-block { border-bottom: 2px solid #eee; padding: 15px 0; }
-        .word-title { font-weight: bold; color: #e67e22; font-size: 1.2em; margin-bottom: 10px; }
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; }
-        button { background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 20px; }
-        button:hover { background: #219150; }
-        .result { margin-top: 20px; font-weight: bold; text-align: center; font-size: 1.2em; }
-        .correct { border-color: #27ae60 !important; background: #eafaf1; }
-        .wrong { border-color: #e74c3c !important; background: #fdedec; }
-        .label { font-size: 0.8em; color: #7f8c8d; margin-bottom: 2px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; padding: 20px; background: #f0f2f5; color: #333; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        h1 { text-align: center; color: #1a73e8; margin-bottom: 30px; }
+        .word-block { border: 1px solid #e0e0e0; padding: 20px; margin-bottom: 20px; border-radius: 8px; background: #fafafa; }
+        .word-title { font-weight: bold; color: #d9534f; font-size: 1.3em; margin-bottom: 15px; border-left: 5px solid #d9534f; padding-left: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        .input-group { display: flex; flex-direction: column; }
+        .label { font-size: 0.85em; font-weight: 600; color: #5f6368; margin-bottom: 5px; text-transform: uppercase; }
+        input { padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 15px; transition: border-color 0.3s; }
+        input:focus { border-color: #1a73e8; outline: none; }
+        button { background: #1a73e8; color: white; border: none; padding: 12px 30px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background 0.3s; }
+        button:hover { background: #1557b0; }
+        .result { margin-top: 25px; padding: 15px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 1.1em; }
+        .correct { border-color: #28a745 !important; background: #e6f4ea; }
+        .wrong { border-color: #dc3545 !important; background: #fce8e6; }
+        .note { font-size: 0.9em; color: #666; margin-top: 5px; font-style: italic; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Trắc Nghiệm Word Form</h1>
+    <h1>Word Form Mastery</h1>
     <div id="quiz-container">
-        <p style="text-align: center;">Nhấn nút bên dưới để bắt đầu bài kiểm tra 5 từ ngẫu nhiên từ tài liệu.</p>
+        <p style="text-align: center; color: #666;">Nhấn nút bên dưới để bắt đầu luyện tập 5 từ ngẫu nhiên từ ngân hàng câu hỏi PDF.</p>
     </div>
-    <div style="text-align: center;">
-        <button id="action-btn" onclick="startQuiz()">Bắt đầu bài mới</button>
+    <div style="text-align: center; margin-top: 20px;">
+        <button id="action-btn" onclick="startQuiz()">BẮT ĐẦU BÀI MỚI</button>
     </div>
     <div id="score" class="result"></div>
 </div>
 
 <script>
-// Dữ liệu trích xuất từ các bảng trong PDF 
+// Toàn bộ dữ liệu trích xuất từ Test 1 - Test 8 trong PDF 
 const wordBank = [
-   Dưới đây là ngân hàng câu hỏi đầy đủ được trích xuất từ tất cả các bài Test trong file PDF của bạn (từ Test 1 đến Test 8) .
-
-Tôi đã cấu trúc lại dữ liệu này dưới dạng một mảng JavaScript để bạn có thể dễ dàng thay thế vào đoạn mã HTML đã gửi trước đó. Ngân hàng này bao gồm đầy đủ 4 dạng: Tính từ (Adjective), Danh từ (Noun), Động từ (Verb), và Trạng từ (Adverb).
-+4
-
-JavaScript
-const wordBank = [
-    // TEST 1
+   // TEST 1
     { root: "color", adj: "colorful", noun: "color", verb: "color", adv: "" },
     { root: "impress", adj: "impressive", noun: "impression", verb: "impress", adv: "impressively" },
     { root: "surprise", adj: "surprising", noun: "surprise", verb: "surprise", adv: "surprisingly" },
@@ -107,21 +103,18 @@ let masteredWords = JSON.parse(localStorage.getItem('masteredWords')) || [];
 let currentQuizWords = [];
 
 function startQuiz() {
-    // Lọc bỏ những từ đã thuộc (mastered) [trọng số]
     let availableWords = wordBank.filter(w => !masteredWords.includes(w.root));
     
-    // Nếu hết từ thì reset lại ngân hàng
     if (availableWords.length < 5) {
         masteredWords = [];
         availableWords = [...wordBank];
-        alert("Chúc mừng! Bạn đã hoàn thành tất cả từ vựng. Hệ thống sẽ bắt đầu lại vòng mới.");
+        alert("Bạn đã hoàn thành tất cả từ vựng! Hệ thống sẽ bắt đầu lại từ đầu.");
     }
 
-    // Lấy ngẫu nhiên 5 từ
     currentQuizWords = availableWords.sort(() => 0.5 - Math.random()).slice(0, 5);
     
     renderQuiz();
-    document.getElementById('action-btn').innerHTML = "Nộp bài";
+    document.getElementById('action-btn').innerText = "NỘP BÀI";
     document.getElementById('action-btn').onclick = checkAnswers;
     document.getElementById('score').innerHTML = "";
 }
@@ -134,24 +127,37 @@ function renderQuiz() {
         const div = document.createElement('div');
         div.className = 'word-block';
         div.innerHTML = `
-            <div class="word-title">Từ gốc: ${w.root.toUpperCase()}</div>
+            <div class="word-title">Gốc: ${w.root.toUpperCase()}</div>
             <div class="grid">
-                <div><div class="label">Tính từ (Adj)</div><input type="text" id="adj-${index}"></div>
-                <div><div class="label">Danh từ (Noun)</div><input type="text" id="noun-${index}"></div>
-                <div><div class="label">Động từ (Verb)</div><input type="text" id="verb-${index}"></div>
-                <div><div class="label">Trạng từ (Adv)</div><input type="text" id="adv-${index}"></div>
+                <div class="input-group">
+                    <div class="label">Danh từ (Noun)</div>
+                    <input type="text" id="noun-${index}" autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <div class="label">Động từ (Verb)</div>
+                    <input type="text" id="verb-${index}" autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <div class="label">Tính từ (Adj)</div>
+                    <input type="text" id="adj-${index}" autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <div class="label">Trạng từ (Adv)</div>
+                    <input type="text" id="adv-${index}" autocomplete="off">
+                </div>
             </div>
+            <div id="ans-note-${index}" class="note"></div>
         `;
         container.appendChild(div);
     });
 }
 
 function checkAnswers() {
-    let score = 0;
-    let perfectWordsCount = 0;
+    let totalCorrectCells = 0;
+    let perfectWords = 0;
 
     currentQuizWords.forEach((w, index) => {
-        const types = ['adj', 'noun', 'verb', 'adv'];
+        const types = ['noun', 'verb', 'adj', 'adv'];
         let isWordPerfect = true;
 
         types.forEach(type => {
@@ -159,29 +165,40 @@ function checkAnswers() {
             const userVal = input.value.trim().toLowerCase();
             const correctVal = w[type].toLowerCase();
 
-            // Nếu ô trong dữ liệu trống, bỏ qua hoặc chấp nhận để trống
-            if (correctVal === "" || userVal === correctVal || (correctVal.includes('/') && correctVal.split('/').some(v => v.trim() === userVal))) {
+            // Logic kiểm tra: Đúng nếu khớp hoàn toàn hoặc khớp 1 phần trong các từ cách nhau bởi dấu /
+            let isCorrect = false;
+            if (correctVal === "") {
+                if (userVal === "") isCorrect = true;
+            } else {
+                const possibleAnswers = correctVal.split('/').map(v => v.trim());
+                if (possibleAnswers.includes(userVal)) isCorrect = true;
+            }
+
+            if (isCorrect) {
                 input.className = 'correct';
-                score++;
+                totalCorrectCells++;
             } else {
                 input.className = 'wrong';
-                input.title = `Đáp án: ${w[type]}`;
+                input.title = `Đáp án đúng: ${w[type] || '(Không có)'}`;
                 isWordPerfect = false;
             }
         });
 
         if (isWordPerfect) {
             if (!masteredWords.includes(w.root)) masteredWords.push(w.root);
-            perfectWordsCount++;
+            perfectWords++;
+        } else {
+            document.getElementById(`ans-note-${index}`).innerHTML = 
+                `Đáp án: N: ${w.noun} | V: ${w.verb} | Adj: ${w.adj} | Adv: ${w.adv}`;
         }
     });
 
     localStorage.setItem('masteredWords', JSON.stringify(masteredWords));
     
-    document.getElementById('score').innerHTML = `Kết quả: Đúng ${score}/20 ô. <br> 
-    Có ${perfectWordsCount}/5 từ đã hoàn thành xuất sắc và sẽ không hiện lại lượt tới.`;
+    document.getElementById('score').innerHTML = `Đúng ${totalCorrectCells}/20 ô. <br> 
+    Thêm được <b>${perfectWords}</b> từ vào danh sách đã thuộc (sẽ không xuất hiện lại lượt tới).`;
     
-    document.getElementById('action-btn').innerHTML = "Làm bài mới (5 từ khác)";
+    document.getElementById('action-btn').innerText = "LÀM TIẾP 5 TỪ KHÁC";
     document.getElementById('action-btn').onclick = startQuiz;
 }
 </script>
