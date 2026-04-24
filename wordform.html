@@ -35,36 +35,72 @@
 <script>
 // Dữ liệu trích xuất từ các bảng trong PDF 
 const wordBank = [
+   Dưới đây là ngân hàng câu hỏi đầy đủ được trích xuất từ tất cả các bài Test trong file PDF của bạn (từ Test 1 đến Test 8) .
+
+Tôi đã cấu trúc lại dữ liệu này dưới dạng một mảng JavaScript để bạn có thể dễ dàng thay thế vào đoạn mã HTML đã gửi trước đó. Ngân hàng này bao gồm đầy đủ 4 dạng: Tính từ (Adjective), Danh từ (Noun), Động từ (Verb), và Trạng từ (Adverb).
++4
+
+JavaScript
+const wordBank = [
+    // TEST 1
+    { root: "color", adj: "colorful", noun: "color", verb: "color", adv: "" },
     { root: "impress", adj: "impressive", noun: "impression", verb: "impress", adv: "impressively" },
     { root: "surprise", adj: "surprising", noun: "surprise", verb: "surprise", adv: "surprisingly" },
     { root: "heat", adj: "heated", noun: "heat/heater", verb: "heat", adv: "heatedly" },
-    { root: "permit", adj: "permissible", noun: "permission", verb: "permit", adv: "" },
+    { root: "permit", adj: "", noun: "permission", verb: "permit", adv: "" },
+    { root: "document", adj: "documentary", noun: "document", verb: "document", adv: "" },
+
+    // TEST 2
     { root: "use", adj: "useful", noun: "use", verb: "use", adv: "usefully" },
+    { root: "promise", adj: "promising", noun: "promise", verb: "promise", adv: "" },
     { root: "increase", adj: "increasing", noun: "increase", verb: "increase", adv: "increasingly" },
-    { root: "perform", adj: "", noun: "performance", verb: "perform", adv: "" },
-    { root: "develop", adj: "developed", noun: "development", verb: "develop", adv: "" },
+    { root: "sun", adj: "solar", noun: "sun", verb: "", adv: "" },
+    { root: "perform", adj: "", noun: "performance/performer", verb: "perform", adv: "" },
+    { root: "develop", adj: "developed", noun: "development/developer", verb: "develop", adv: "" },
+
+    // TEST 3
     { root: "occasion", adj: "occasional", noun: "occasion", verb: "occasion", adv: "occasionally" },
-    { root: "nominate", adj: "nominated", noun: "nominee", verb: "nominate", adv: "" },
+    { root: "nominate", adj: "nominated", noun: "nominee/nominator/nomination", verb: "nominate", adv: "" },
     { root: "attend", adj: "attentive", noun: "attention", verb: "attend", adv: "attentively" },
     { root: "conserve", adj: "conservative", noun: "conservation", verb: "conserve", adv: "conservatively" },
     { root: "decorate", adj: "decorative", noun: "decoration", verb: "decorate", adv: "decoratively" },
-    { root: "depend", adj: "dependent", noun: "dependence", verb: "depend", adv: "dependently" },
+
+    // TEST 4
+    { root: "depend", adj: "dependent/independent", noun: "dependence/independence", verb: "depend", adv: "dependently/independently" },
     { root: "relax", adj: "relaxing", noun: "relaxation", verb: "relax", adv: "" },
     { root: "consume", adj: "consumable", noun: "consumption", verb: "consume", adv: "" },
     { root: "extend", adj: "extensive", noun: "extension", verb: "extend", adv: "extensively" },
+    { root: "instruct", adj: "instructive", noun: "instructor", verb: "instruct", adv: "instructively" },
     { root: "erupt", adj: "eruptive", noun: "eruption", verb: "erupt", adv: "" },
+
+    // TEST 5
     { root: "elegant", adj: "elegant", noun: "elegance", verb: "", adv: "elegantly" },
     { root: "preserve", adj: "preservative", noun: "preservation", verb: "preserve", adv: "" },
     { root: "pollute", adj: "polluted", noun: "pollution", verb: "pollute", adv: "" },
     { root: "admire", adj: "admirable", noun: "admiration", verb: "admire", adv: "admirably" },
     { root: "fortune", adj: "fortunate", noun: "fortune", verb: "", adv: "fortunately" },
+
+    // TEST 6
     { root: "benefit", adj: "beneficial", noun: "benefit", verb: "benefit", adv: "beneficially" },
+    { root: "contest", adj: "contested", noun: "contestant", verb: "contest", adv: "" },
+    { root: "home", adj: "home/homeless", noun: "home/homelessness", verb: "home", adv: "" },
+    { root: "near", adj: "near", noun: "nearness", verb: "near", adv: "nearly" },
+    { root: "conclude", adj: "conclusive", noun: "conclusion", verb: "conclude", adv: "conclusively" },
+
+    // TEST 7
+    { root: "prepare", adj: "prepared", noun: "preparation", verb: "prepare", adv: "" },
+    { root: "experience", adj: "experienced", noun: "experience", verb: "experience", adv: "" },
     { root: "beauty", adj: "beautiful", noun: "beauty", verb: "beautify", adv: "beautifully" },
     { root: "effect", adj: "effective", noun: "effect", verb: "affect", adv: "effectively" },
+    { root: "assist", adj: "assistant", noun: "assistance", verb: "assist", adv: "" },
     { root: "succeed", adj: "successful", noun: "success", verb: "succeed", adv: "successfully" },
+
+    // TEST 8
     { root: "attract", adj: "attractive", noun: "attraction", verb: "attract", adv: "attractively" },
+    { root: "please", adj: "pleasant", noun: "pleasure", verb: "please", adv: "pleasantly" },
     { root: "amaze", adj: "amazing", noun: "amazement", verb: "amaze", adv: "amazingly" },
-    { root: "science", adj: "scientific", noun: "science", verb: "", adv: "scientifically" }
+    { root: "science", adj: "scientific", noun: "science/scientist", verb: "", adv: "scientifically" },
+    { root: "damage", adj: "damaging", noun: "damage", verb: "damage", adv: "" }
 ];
 
 let masteredWords = JSON.parse(localStorage.getItem('masteredWords')) || [];
