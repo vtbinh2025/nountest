@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Trắc Nghiệm Word Form - Ngân Hàng PDF</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; padding: 20px; background: #f4f4f9; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c3e50; }
+        .word-block { border-bottom: 2px solid #eee; padding: 15px 0; }
+        .word-title { font-weight: bold; color: #e67e22; font-size: 1.2em; margin-bottom: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; }
+        button { background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 20px; }
+        button:hover { background: #219150; }
+        .result { margin-top: 20px; font-weight: bold; text-align: center; font-size: 1.2em; }
+        .correct { border-color: #27ae60 !important; background: #eafaf1; }
+        .wrong { border-color: #e74c3c !important; background: #fdedec; }
+        .label { font-size: 0.8em; color: #7f8c8d; margin-bottom: 2px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Trắc Nghiệm Word Form</h1>
+    <div id="quiz-container">
+        <p style="text-align: center;">Nhấn nút bên dưới để bắt đầu bài kiểm tra 5 từ ngẫu nhiên từ tài liệu.</p>
+    </div>
+    <div style="text-align: center;">
+        <button id="action-btn" onclick="startQuiz()">Bắt đầu bài mới</button>
+    </div>
+    <div id="score" class="result"></div>
+</div>
+
+<script>
+// Dữ liệu trích xuất từ các bảng trong PDF 
+const wordBank = [
+    { root: "impress", adj: "impressive", noun: "impression", verb: "impress", adv: "impressively" },
+    { root: "surprise", adj: "surprising", noun: "surprise", verb: "surprise", adv: "surprisingly" },
+    { root: "heat", adj: "heated", noun: "heat/heater", verb: "heat", adv: "heatedly" },
+    { root: "permit", adj: "permissible", noun: "permission", verb: "permit", adv: "" },
+    { root: "use", adj: "useful", noun: "use", verb: "use", adv: "usefully" },
+    { root: "increase", adj: "increasing", noun: "increase", verb: "increase", adv: "increasingly" },
+    { root: "perform", adj: "", noun: "performance", verb: "perform", adv: "" },
+    { root: "develop", adj: "developed", noun: "development", verb: "develop", adv: "" },
+    { root: "occasion", adj: "occasional", noun: "occasion", verb: "occasion", adv: "occasionally" },
+    { root: "nominate", adj: "nominated", noun: "nominee", verb: "nominate", adv: "" },
+    { root: "attend", adj: "attentive", noun: "attention", verb: "attend", adv: "attentively" },
+    { root: "conserve", adj: "conservative", noun: "conservation", verb: "conserve", adv: "conservatively" },
+    { root: "decorate", adj: "decorative", noun: "decoration", verb: "decorate", adv: "decoratively" },
+    { root: "depend", adj: "dependent", noun: "dependence", verb: "depend", adv: "dependently" },
+    { root: "relax", adj: "relaxing", noun: "relaxation", verb: "relax", adv: "" },
+    { root: "consume", adj: "consumable", noun: "consumption", verb: "consume", adv: "" },
+    { root: "extend", adj: "extensive", noun: "extension", verb: "extend", adv: "extensively" },
+    { root: "erupt", adj: "eruptive", noun: "eruption", verb: "erupt", adv: "" },
+    { root: "elegant", adj: "elegant", noun: "elegance", verb: "", adv: "elegantly" },
+    { root: "preserve", adj: "preservative", noun: "preservation", verb: "preserve", adv: "" },
+    { root: "pollute", adj: "polluted", noun: "pollution", verb: "pollute", adv: "" },
+    { root: "admire", adj: "admirable", noun: "admiration", verb: "admire", adv: "admirably" },
+    { root: "fortune", adj: "fortunate", noun: "fortune", verb: "", adv: "fortunately" },
+    { root: "benefit", adj: "beneficial", noun: "benefit", verb: "benefit", adv: "beneficially" },
+    { root: "beauty", adj: "beautiful", noun: "beauty", verb: "beautify", adv: "beautifully" },
+    { root: "effect", adj: "effective", noun: "effect", verb: "affect", adv: "effectively" },
+    { root: "succeed", adj: "successful", noun: "success", verb: "succeed", adv: "successfully" },
+    { root: "attract", adj: "attractive", noun: "attraction", verb: "attract", adv: "attractively" },
+    { root: "amaze", adj: "amazing", noun: "amazement", verb: "amaze", adv: "amazingly" },
+    { root: "science", adj: "scientific", noun: "science", verb: "", adv: "scientifically" }
+];
+
+let masteredWords = JSON.parse(localStorage.getItem('masteredWords')) || [];
+let currentQuizWords = [];
+
+function startQuiz() {
+    // Lọc bỏ những từ đã thuộc (mastered) [trọng số]
+    let availableWords = wordBank.filter(w => !masteredWords.includes(w.root));
+    
+    // Nếu hết từ thì reset lại ngân hàng
+    if (availableWords.length < 5) {
+        masteredWords = [];
+        availableWords = [...wordBank];
+        alert("Chúc mừng! Bạn đã hoàn thành tất cả từ vựng. Hệ thống sẽ bắt đầu lại vòng mới.");
+    }
+
+    // Lấy ngẫu nhiên 5 từ
+    currentQuizWords = availableWords.sort(() => 0.5 - Math.random()).slice(0, 5);
+    
+    renderQuiz();
+    document.getElementById('action-btn').innerHTML = "Nộp bài";
+    document.getElementById('action-btn').onclick = checkAnswers;
+    document.getElementById('score').innerHTML = "";
+}
+
+function renderQuiz() {
+    const container = document.getElementById('quiz-container');
+    container.innerHTML = "";
+    
+    currentQuizWords.forEach((w, index) => {
+        const div = document.createElement('div');
+        div.className = 'word-block';
+        div.innerHTML = `
+            <div class="word-title">Từ gốc: ${w.root.toUpperCase()}</div>
+            <div class="grid">
+                <div><div class="label">Tính từ (Adj)</div><input type="text" id="adj-${index}"></div>
+                <div><div class="label">Danh từ (Noun)</div><input type="text" id="noun-${index}"></div>
+                <div><div class="label">Động từ (Verb)</div><input type="text" id="verb-${index}"></div>
+                <div><div class="label">Trạng từ (Adv)</div><input type="text" id="adv-${index}"></div>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function checkAnswers() {
+    let score = 0;
+    let perfectWordsCount = 0;
+
+    currentQuizWords.forEach((w, index) => {
+        const types = ['adj', 'noun', 'verb', 'adv'];
+        let isWordPerfect = true;
+
+        types.forEach(type => {
+            const input = document.getElementById(`${type}-${index}`);
+            const userVal = input.value.trim().toLowerCase();
+            const correctVal = w[type].toLowerCase();
+
+            // Nếu ô trong dữ liệu trống, bỏ qua hoặc chấp nhận để trống
+            if (correctVal === "" || userVal === correctVal || (correctVal.includes('/') && correctVal.split('/').some(v => v.trim() === userVal))) {
+                input.className = 'correct';
+                score++;
+            } else {
+                input.className = 'wrong';
+                input.title = `Đáp án: ${w[type]}`;
+                isWordPerfect = false;
+            }
+        });
+
+        if (isWordPerfect) {
+            if (!masteredWords.includes(w.root)) masteredWords.push(w.root);
+            perfectWordsCount++;
+        }
+    });
+
+    localStorage.setItem('masteredWords', JSON.stringify(masteredWords));
+    
+    document.getElementById('score').innerHTML = `Kết quả: Đúng ${score}/20 ô. <br> 
+    Có ${perfectWordsCount}/5 từ đã hoàn thành xuất sắc và sẽ không hiện lại lượt tới.`;
+    
+    document.getElementById('action-btn').innerHTML = "Làm bài mới (5 từ khác)";
+    document.getElementById('action-btn').onclick = startQuiz;
+}
+</script>
+</body>
+</html>
