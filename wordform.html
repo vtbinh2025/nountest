@@ -38,65 +38,1322 @@
 <script>
 // Toàn bộ dữ liệu trích xuất từ Test 1 - Test 8 trong PDF 
 const wordBank = [
-   // TEST 1
-    { root: "color", adj: "colorful", noun: "color", verb: "color", adv: "" },
-    { root: "impress", adj: "impressive", noun: "impression", verb: "impress", adv: "impressively" },
-    { root: "surprise", adj: "surprising", noun: "surprise", verb: "surprise", adv: "surprisingly" },
-    { root: "heat", adj: "heated", noun: "heat/heater", verb: "heat", adv: "heatedly" },
-    { root: "permit", adj: "", noun: "permission", verb: "permit", adv: "" },
-    { root: "document", adj: "documentary", noun: "document", verb: "document", adv: "" },
-
-    // TEST 2
-    { root: "use", adj: "useful", noun: "use", verb: "use", adv: "usefully" },
-    { root: "promise", adj: "promising", noun: "promise", verb: "promise", adv: "" },
-    { root: "increase", adj: "increasing", noun: "increase", verb: "increase", adv: "increasingly" },
-    { root: "sun", adj: "solar", noun: "sun", verb: "", adv: "" },
-    { root: "perform", adj: "", noun: "performance/performer", verb: "perform", adv: "" },
-    { root: "develop", adj: "developed", noun: "development/developer", verb: "develop", adv: "" },
-
-    // TEST 3
-    { root: "occasion", adj: "occasional", noun: "occasion", verb: "occasion", adv: "occasionally" },
-    { root: "nominate", adj: "nominated", noun: "nominee/nominator/nomination", verb: "nominate", adv: "" },
-    { root: "attend", adj: "attentive", noun: "attention", verb: "attend", adv: "attentively" },
-    { root: "conserve", adj: "conservative", noun: "conservation", verb: "conserve", adv: "conservatively" },
-    { root: "decorate", adj: "decorative", noun: "decoration", verb: "decorate", adv: "decoratively" },
-
-    // TEST 4
-    { root: "depend", adj: "dependent/independent", noun: "dependence/independence", verb: "depend", adv: "dependently/independently" },
-    { root: "relax", adj: "relaxing", noun: "relaxation", verb: "relax", adv: "" },
-    { root: "consume", adj: "consumable", noun: "consumption", verb: "consume", adv: "" },
-    { root: "extend", adj: "extensive", noun: "extension", verb: "extend", adv: "extensively" },
-    { root: "instruct", adj: "instructive", noun: "instructor", verb: "instruct", adv: "instructively" },
-    { root: "erupt", adj: "eruptive", noun: "eruption", verb: "erupt", adv: "" },
-
-    // TEST 5
-    { root: "elegant", adj: "elegant", noun: "elegance", verb: "", adv: "elegantly" },
-    { root: "preserve", adj: "preservative", noun: "preservation", verb: "preserve", adv: "" },
-    { root: "pollute", adj: "polluted", noun: "pollution", verb: "pollute", adv: "" },
-    { root: "admire", adj: "admirable", noun: "admiration", verb: "admire", adv: "admirably" },
-    { root: "fortune", adj: "fortunate", noun: "fortune", verb: "", adv: "fortunately" },
-
-    // TEST 6
-    { root: "benefit", adj: "beneficial", noun: "benefit", verb: "benefit", adv: "beneficially" },
-    { root: "contest", adj: "contested", noun: "contestant", verb: "contest", adv: "" },
-    { root: "home", adj: "home/homeless", noun: "home/homelessness", verb: "home", adv: "" },
-    { root: "near", adj: "near", noun: "nearness", verb: "near", adv: "nearly" },
-    { root: "conclude", adj: "conclusive", noun: "conclusion", verb: "conclude", adv: "conclusively" },
-
-    // TEST 7
-    { root: "prepare", adj: "prepared", noun: "preparation", verb: "prepare", adv: "" },
-    { root: "experience", adj: "experienced", noun: "experience", verb: "experience", adv: "" },
-    { root: "beauty", adj: "beautiful", noun: "beauty", verb: "beautify", adv: "beautifully" },
-    { root: "effect", adj: "effective", noun: "effect", verb: "affect", adv: "effectively" },
-    { root: "assist", adj: "assistant", noun: "assistance", verb: "assist", adv: "" },
-    { root: "succeed", adj: "successful", noun: "success", verb: "succeed", adv: "successfully" },
-
-    // TEST 8
-    { root: "attract", adj: "attractive", noun: "attraction", verb: "attract", adv: "attractively" },
-    { root: "please", adj: "pleasant", noun: "pleasure", verb: "please", adv: "pleasantly" },
-    { root: "amaze", adj: "amazing", noun: "amazement", verb: "amaze", adv: "amazingly" },
-    { root: "science", adj: "scientific", noun: "science/scientist", verb: "", adv: "scientifically" },
-    { root: "damage", adj: "damaging", noun: "damage", verb: "damage", adv: "" }
+  {
+    "root": "conform",
+    "noun": "conformity/conformist",
+    "verb": "conform",
+    "adj": "conformist",
+    "adv": ""
+  },
+  {
+    "root": "consume",
+    "noun": "consumption/consumer",
+    "verb": "consume",
+    "adj": "consumptive/time-consuming",
+    "adv": ""
+  },
+  {
+    "root": "extrovert/introvert",
+    "noun": "extrovert/introvert",
+    "verb": "",
+    "adj": "extroverted/introverted",
+    "adv": ""
+  },
+  {
+    "root": "hesitate",
+    "noun": "hesitation/hesitance/hesitancy",
+    "verb": "hesitate",
+    "adj": "hesitant",
+    "adv": "hesitantly/hesitatingly"
+  },
+  {
+    "root": "luxuriate",
+    "noun": "luxury",
+    "verb": "luxuriate",
+    "adj": "luxurious",
+    "adv": "luxuriously"
+  },
+  {
+    "root": "participate",
+    "noun": "participation/participant",
+    "verb": "participate",
+    "adj": "participatory",
+    "adv": ""
+  },
+  {
+    "root": "prepare",
+    "noun": "preparation",
+    "verb": "prepare",
+    "adj": "prepared/unprepared/preparatory",
+    "adv": ""
+  },
+  {
+    "root": "sympathise",
+    "noun": "sympathy/sympathiser",
+    "verb": "sympathise",
+    "adj": "sympathetic/unsympathetic",
+    "adv": "sympathetically"
+  },
+  {
+    "root": "transform",
+    "noun": "transformation/transformer",
+    "verb": "transform",
+    "adj": "transformational/transformative",
+    "adv": ""
+  },
+  {
+    "root": "unearth",
+    "noun": "earth/earthiness",
+    "verb": "unearth",
+    "adj": "earthy/earthly/unearthly/earthen",
+    "adv": "earthwards"
+  },
+  {
+    "root": "adapt",
+    "noun": "adaptability/adaptation/adapter/adaptor",
+    "verb": "adapt",
+    "adj": "adaptable/adapted",
+    "adv": ""
+  },
+  {
+    "root": "educate",
+    "noun": "education/educator",
+    "verb": "educate",
+    "adj": "educated/uneducated/educational/educable/ineducable/educative",
+    "adv": "educationally"
+  },
+  {
+    "root": "encourage",
+    "noun": "encouragement/discouragement",
+    "verb": "encourage/discourage",
+    "adj": "encouraged/discouraged/encouraging/discouraging",
+    "adv": "encouragingly/discouragingly"
+  },
+  {
+    "root": "explore",
+    "noun": "exploration/explorer",
+    "verb": "explore",
+    "adj": "exploratory/unexplored",
+    "adv": ""
+  },
+  {
+    "root": "planet",
+    "noun": "planet",
+    "verb": "",
+    "adj": "planetary",
+    "adv": ""
+  },
+  {
+    "root": "pollute",
+    "noun": "pollution/pollutant/polluter",
+    "verb": "pollute",
+    "adj": "polluted/unpolluted",
+    "adv": ""
+  },
+  {
+    "root": "provide",
+    "noun": "provision/provider",
+    "verb": "provide",
+    "adj": "provisional",
+    "adv": "provisionally"
+  },
+  {
+    "root": "serious",
+    "noun": "seriousness",
+    "verb": "",
+    "adj": "serious",
+    "adv": "seriously"
+  },
+  {
+    "root": "soften",
+    "noun": "softness/softener",
+    "verb": "soften",
+    "adj": "soft",
+    "adv": "softly"
+  },
+  {
+    "root": "volunteer",
+    "noun": "volunteer/volunteering",
+    "verb": "volunteer",
+    "adj": "voluntary/involuntary",
+    "adv": "voluntarily/involuntarily"
+  },
+  {
+    "root": "afford",
+    "noun": "affordability",
+    "verb": "afford",
+    "adj": "affordable/unaffordable",
+    "adv": "affordably"
+  },
+  {
+    "root": "alternative",
+    "noun": "alternative",
+    "verb": "",
+    "adj": "alternative",
+    "adv": "alternatively"
+  },
+  {
+    "root": "discuss",
+    "noun": "discussion",
+    "verb": "discuss",
+    "adj": "",
+    "adv": ""
+  },
+  {
+    "root": "frighten",
+    "noun": "fright/frighteners",
+    "verb": "frighten",
+    "adj": "frightened/frightening/frightful",
+    "adv": "frighteningly/frightfully"
+  },
+  {
+    "root": "grateful",
+    "noun": "gratitude/ingratitude",
+    "verb": "",
+    "adj": "grateful/ungrateful",
+    "adv": "gratefully"
+  },
+  {
+    "root": "invent",
+    "noun": "invention/inventor/inventory/inventiveness",
+    "verb": "invent",
+    "adj": "inventive",
+    "adv": "inventively"
+  },
+  {
+    "root": "please",
+    "noun": "displeasure/pleasantry/pleasure",
+    "verb": "please/displease",
+    "adj": "pleasant/unpleasant/pleased/displeased/pleasing/displeasing/pleasurable",
+    "adv": "pleasantly/unpleasantly/pleasingly/pleasurably"
+  },
+  {
+    "root": "power",
+    "noun": "power/superpower/powerlessness/empowerment",
+    "verb": "power/empower/overpower",
+    "adj": "powerful/powerless/overpowering/power/powered",
+    "adv": "powerfully/powerlessly/overpoweringly"
+  },
+  {
+    "root": "pursue",
+    "noun": "pursuer/pursuit",
+    "verb": "pursue",
+    "adj": "",
+    "adv": ""
+  },
+  {
+    "root": "strengthen",
+    "noun": "strength",
+    "verb": "strengthen",
+    "adj": "strong",
+    "adv": "strongly"
+  },
+  {
+    "root": "advertise",
+    "noun": "advertisement/advertising/advertiser",
+    "verb": "advertise",
+    "adj": "",
+    "adv": ""
+  },
+  {
+    "root": "collect",
+    "noun": "collection/collector/collectable",
+    "verb": "collect",
+    "adj": "collective/collected/collectable",
+    "adv": "collectively"
+  },
+  {
+    "root": "cure",
+    "noun": "cure",
+    "verb": "cure",
+    "adj": "cured/curable/incurable/curative",
+    "adv": ""
+  },
+  {
+    "root": "destroy",
+    "noun": "destroyer/destruction",
+    "verb": "destroy",
+    "adj": "destructive/indestructible",
+    "adv": "destructively"
+  },
+  {
+    "root": "increase",
+    "noun": "increase",
+    "verb": "increase",
+    "adj": "increased/increasing",
+    "adv": "increasingly"
+  },
+  {
+    "root": "interest",
+    "noun": "interest/disinterest",
+    "verb": "interest",
+    "adj": "interested/disinterested/uninterested/interesting/uninteresting",
+    "adv": "interestingly/disinterestedly"
+  },
+  {
+    "root": "legend",
+    "noun": "legend",
+    "verb": "",
+    "adj": "legendary",
+    "adv": ""
+  },
+  {
+    "root": "psychology",
+    "noun": "psychology/psychologist",
+    "verb": "",
+    "adj": "psychological",
+    "adv": "psychologically"
+  },
+  {
+    "root": "rebel",
+    "noun": "rebel/rebelliousness",
+    "verb": "rebel",
+    "adj": "rebellious",
+    "adv": "rebelliously"
+  },
+  {
+    "root": "recognise",
+    "noun": "recognition",
+    "verb": "recognise",
+    "adj": "recognisable/unrecognisable",
+    "adv": "recognisably"
+  },
+  {
+    "root": "amaze",
+    "noun": "amazement",
+    "verb": "amaze",
+    "adj": "amazed/amazing",
+    "adv": "amazingly"
+  },
+  {
+    "root": "friend",
+    "noun": "friend/friendliness/friendship",
+    "verb": "befriend",
+    "adj": "friendly/unfriendly/friendless",
+    "adv": ""
+  },
+  {
+    "root": "know",
+    "noun": "knowledge",
+    "verb": "know",
+    "adj": "knowing/knowledgeable/known/unknown",
+    "adv": "knowingly/unknowingly/knowledgeably"
+  },
+  {
+    "root": "convenience",
+    "noun": "convenience/inconvenience",
+    "verb": "inconvenience",
+    "adj": "convenient/inconvenient",
+    "adv": "conveniently/inconveniently"
+  },
+  {
+    "root": "passion",
+    "noun": "passion",
+    "verb": "",
+    "adj": "passionate/dispassionate/impassioned",
+    "adv": "passionately/dispassionately"
+  },
+  {
+    "root": "prefer",
+    "noun": "preference",
+    "verb": "prefer",
+    "adj": "preferable/preferential",
+    "adv": "preferably/preferentially"
+  },
+  {
+    "root": "prevent",
+    "noun": "prevention",
+    "verb": "prevent",
+    "adj": "preventable/preventive/preventative",
+    "adv": "preventively/preventatively"
+  },
+  {
+    "root": "receive",
+    "noun": "receipt/receiver/reception/receptionist",
+    "verb": "receive",
+    "adj": "receptive/unreceptive/received",
+    "adv": ""
+  },
+  {
+    "root": "recommend",
+    "noun": "recommendation",
+    "verb": "recommend",
+    "adj": "",
+    "adv": ""
+  },
+  {
+    "root": "weigh",
+    "noun": "weight/weights/weighting",
+    "verb": "weigh/outweigh",
+    "adj": "overweight/underweight/weighted/weighty/weightless",
+    "adv": ""
+  },
+  {
+    "root": "anger",
+    "noun": "anger",
+    "verb": "anger",
+    "adj": "angry",
+    "adv": "angrily"
+  },
+  {
+    "root": "behave",
+    "noun": "behaviour/misbehaviour/behaviourist",
+    "verb": "behave/misbehave",
+    "adj": "behavioural",
+    "adv": "behaviourally"
+  },
+  {
+    "root": "caution",
+    "noun": "caution/cautiousness",
+    "verb": "caution",
+    "adj": "cautious",
+    "adv": "cautiously"
+  },
+  {
+    "root": "cover",
+    "noun": "cover/coverage/covering",
+    "verb": "cover/uncover",
+    "adj": "undercover/covered/uncovered",
+    "adv": "undercover"
+  },
+  {
+    "root": "dominate",
+    "noun": "domination",
+    "verb": "dominate",
+    "adj": "dominating",
+    "adv": ""
+  },
+  {
+    "root": "efficient",
+    "noun": "efficiency/inefficiency",
+    "verb": "",
+    "adj": "efficient/inefficient",
+    "adv": "efficiently/inefficiently"
+  },
+  {
+    "root": "employ",
+    "noun": "employment/unemployment/employee/employer",
+    "verb": "employ",
+    "adj": "employed/unemployed/employable/unemployable",
+    "adv": ""
+  },
+  {
+    "root": "fatal",
+    "noun": "fatality",
+    "verb": "",
+    "adj": "fatal",
+    "adv": "fatally"
+  },
+  {
+    "root": "occur",
+    "noun": "occurrence",
+    "verb": "occur",
+    "adj": "",
+    "adv": ""
+  },
+  {
+    "root": "suffer",
+    "noun": "sufferer/suffering/sufferance",
+    "verb": "suffer",
+    "adj": "insufferable",
+    "adv": "insufferable"
+  },
+  {
+    "root": "accident",
+    "noun": "accident",
+    "verb": "",
+    "adj": "accidental",
+    "adv": "accidentally"
+  },
+  {
+    "root": "advise",
+    "noun": "advice/adviser/advisor/advisability",
+    "verb": "advise",
+    "adj": "advisable/inadvisable/advisory",
+    "adv": "advisedly"
+  },
+  {
+    "root": "criminal",
+    "noun": "crime/criminal",
+    "verb": "criminalise",
+    "adj": "criminal",
+    "adv": "criminally"
+  },
+  {
+    "root": "damage",
+    "noun": "damage",
+    "verb": "damage",
+    "adj": "damaging",
+    "adv": ""
+  },
+  {
+    "root": "experience",
+    "noun": "experience/inexperience",
+    "verb": "experience",
+    "adj": "experienced/inexperienced",
+    "adv": ""
+  },
+  {
+    "root": "essential",
+    "noun": "essence/essentials/inessentials",
+    "verb": "",
+    "adj": "essential/inessential",
+    "adv": "essentially"
+  },
+  {
+    "root": "impress",
+    "noun": "impression/impressiveness",
+    "verb": "impress",
+    "adj": "impressive/impressionable",
+    "adv": "impressively"
+  },
+  {
+    "root": "incredible",
+    "noun": "incredulity",
+    "verb": "",
+    "adj": "incredible/incredulous",
+    "adv": "incredibly/incredulously"
+  },
+  {
+    "root": "maintain",
+    "noun": "maintenance",
+    "verb": "maintain",
+    "adj": "",
+    "adv": ""
+  },
+  {
+    "root": "popular",
+    "noun": "popularity/unpopularity",
+    "verb": "popularise",
+    "adj": "popular/unpopular",
+    "adv": "popularly"
+  },
+  {
+    "root": "annoy",
+    "noun": "annoyance",
+    "verb": "annoy",
+    "adj": "annoyed/annoying",
+    "adv": "annoyingly"
+  },
+  {
+    "root": "decorate",
+    "noun": "decoration/decorator",
+    "verb": "decorate",
+    "adj": "decorative",
+    "adv": "decoratively"
+  },
+  {
+    "root": "dynamic",
+    "noun": "dynamite",
+    "verb": "dynamite",
+    "adj": "dynamic",
+    "adv": "dynamically"
+  },
+  {
+    "root": "excite",
+    "noun": "excitement",
+    "verb": "excite",
+    "adj": "exciting/unexciting/excited",
+    "adv": "excitingly/excitedly"
+  },
+  {
+    "root": "live",
+    "noun": "liveliness/livelihood/living",
+    "verb": "live",
+    "adj": "live/lively/liveable/living",
+    "adv": "live"
+  },
+  {
+    "root": "mean",
+    "noun": "meaning",
+    "verb": "mean",
+    "adj": "meaningful/meaningless",
+    "adv": "meaningfully"
+  },
+  {
+    "root": "proud",
+    "noun": "pride",
+    "verb": "",
+    "adj": "proud",
+    "adv": "proudly"
+  },
+  {
+    "root": "responsible",
+    "noun": "responsibility/irresponsibility",
+    "verb": "",
+    "adj": "responsible/irresponsible",
+    "adv": "responsibly/irresponsibly"
+  },
+  {
+    "root": "retail",
+    "noun": "retail/retailer",
+    "verb": "retail",
+    "adj": "retail",
+    "adv": ""
+  },
+  {
+    "root": "space",
+    "noun": "space",
+    "verb": "",
+    "adj": "spacious",
+    "adv": "spaciously"
+  },
+  {
+    "root": "enjoy",
+    "noun": "enjoyment",
+    "verb": "enjoy",
+    "adj": "enjoyable",
+    "adv": "enjoyably"
+  },
+  {
+    "root": "flat",
+    "noun": "flat/flatness",
+    "verb": "flatten",
+    "adj": "flat",
+    "adv": "flat/flatly"
+  },
+  {
+    "root": "imply",
+    "noun": "implication",
+    "verb": "imply",
+    "adj": "",
+    "adv": ""
+  },
+  {
+    "root": "medicine",
+    "noun": "medicine/medication",
+    "verb": "",
+    "adj": "medical/medicated/medicinal",
+    "adv": "medically/medicinally"
+  },
+  {
+    "root": "nourish",
+    "noun": "nourishment",
+    "verb": "nourish",
+    "adj": "nourishing",
+    "adv": ""
+  },
+  {
+    "root": "respect",
+    "noun": "respect/disrespect/respectability/respecter/respectfulness",
+    "verb": "respect/disrespect",
+    "adj": "respectable/respected/respectful/disrespectful/respective",
+    "adv": "respectably/respectfully/disrespectfully/respectively"
+  },
+  {
+    "root": "profession",
+    "noun": "profession/professor",
+    "verb": "",
+    "adj": "professional",
+    "adv": "professionally"
+  },
+  {
+    "root": "science",
+    "noun": "science/scientist",
+    "verb": "",
+    "adj": "scientific/unscientific",
+    "adv": "scientifically"
+  },
+  {
+    "root": "sketch",
+    "noun": "sketch/sketcher",
+    "verb": "sketch",
+    "adj": "sketchy",
+    "adv": "sketchily"
+  },
+  {
+    "root": "spectacular",
+    "noun": "spectacle",
+    "verb": "",
+    "adj": "spectacular",
+    "adv": "spectacularly"
+  },
+  {
+    "root": "act",
+    "noun": "act/action/inaction/activity/inactivity",
+    "verb": "act",
+    "adj": "acting/active/inactive",
+    "adv": "actively"
+  },
+  {
+    "root": "benefit",
+    "noun": "benefit/beneficiary",
+    "verb": "benefit",
+    "adj": "beneficial",
+    "adv": "beneficially"
+  },
+  {
+    "root": "challenge",
+    "noun": "challenge/challenger",
+    "verb": "challenge",
+    "adj": "challenging",
+    "adv": "challengingly"
+  },
+  {
+    "root": "compassion",
+    "noun": "compassion",
+    "verb": "",
+    "adj": "compassionate",
+    "adv": "compassionately"
+  },
+  {
+    "root": "exchange",
+    "noun": "exchange",
+    "verb": "exchange",
+    "adj": "exchangeable/unchallengeable/challenged/unchallenged",
+    "adv": ""
+  },
+  {
+    "root": "mass",
+    "noun": "mass",
+    "verb": "",
+    "adj": "mass/massive",
+    "adv": "massively"
+  },
+  {
+    "root": "modesty",
+    "noun": "modesty",
+    "verb": "",
+    "adj": "modest/immodest",
+    "adv": "modestly"
+  },
+  {
+    "root": "pain",
+    "noun": "pain",
+    "verb": "",
+    "adj": "pained/painful/painless",
+    "adv": "painfully/painlessly"
+  },
+  {
+    "root": "reduce",
+    "noun": "reduction",
+    "verb": "reduce",
+    "adj": "reduced",
+    "adv": ""
+  },
+  {
+    "root": "socialise",
+    "noun": "society/socialist",
+    "verb": "socialise",
+    "adj": "social/unsocial/sociable/unsociable",
+    "adv": "socially/sociably"
+  },
+  {
+    "root": "access",
+    "noun": "access/accessibility/inaccessibility",
+    "verb": "access",
+    "adj": "accessible/inaccessible",
+    "adv": "accessibly/inaccessibly"
+  },
+  {
+    "root": "apprentice",
+    "noun": "apprentice/apprenticeship",
+    "verb": "apprentice",
+    "adj": "",
+    "adv": ""
+  },
+  {
+    "root": "bake",
+    "noun": "baker/bakery",
+    "verb": "bake",
+    "adj": "",
+    "adv": ""
+  },
+  {
+    "root": "fail",
+    "noun": "failure/failing",
+    "verb": "fail",
+    "adj": "failed/unfailing",
+    "adv": "unfailingly"
+  },
+  {
+    "root": "fascinate",
+    "noun": "fascination",
+    "verb": "fascinate",
+    "adj": "fascinated/fascinating",
+    "adv": "fascinatingly"
+  },
+  {
+    "root": "heal",
+    "noun": "healing/healer",
+    "verb": "heal",
+    "adj": "healing",
+    "adv": ""
+  },
+  {
+    "root": "pronounce",
+    "noun": "pronunciation",
+    "verb": "pronounce",
+    "adj": "pronounced/pronounceable",
+    "adv": "pronouncedly"
+  },
+  {
+    "root": "recover",
+    "noun": "recovery",
+    "verb": "recover",
+    "adj": "recoverable/recovered",
+    "adv": ""
+  },
+  {
+    "root": "support",
+    "noun": "support/supporter",
+    "verb": "support",
+    "adj": "supportive/supporting",
+    "adv": ""
+  },
+  {
+    "root": "adventure",
+    "noun": "adventure/adventurer",
+    "verb": "adventure",
+    "adj": "adventurous",
+    "adv": "adventurously"
+  },
+  {
+    "root": "collaborate",
+    "noun": "collaboration/collaborator",
+    "verb": "collaborate",
+    "adj": "collaborative",
+    "adv": "collaboratively"
+  },
+  {
+    "root": "commit",
+    "noun": "commitment",
+    "verb": "commit",
+    "adj": "non-committal/committed/uncommitted",
+    "adv": ""
+  },
+  {
+    "root": "distance",
+    "noun": "distance",
+    "verb": "distance",
+    "adj": "distant",
+    "adv": "distantly"
+  },
+  {
+    "root": "experiment",
+    "noun": "experiment/experimentation",
+    "verb": "experiment",
+    "adj": "experimental",
+    "adv": "experimentally"
+  },
+  {
+    "root": "industrialise",
+    "noun": "industry/industrialisation/industrialist/industrialism",
+    "verb": "industrialise",
+    "adj": "industrial/industrious/industrialised",
+    "adv": "industrially/industriously"
+  },
+  {
+    "root": "influence",
+    "noun": "influence/influencer",
+    "verb": "influence",
+    "adj": "influential",
+    "adv": "influentially"
+  },
+  {
+    "root": "philosophy",
+    "noun": "philosophy/philosopher",
+    "verb": "",
+    "adj": "philosophical",
+    "adv": "philosophically"
+  },
+  {
+    "root": "risk",
+    "noun": "risk/riskiness",
+    "verb": "risk",
+    "adj": "risky",
+    "adv": "risky"
+  },
+  {
+    "root": "threaten",
+    "noun": "threat",
+    "verb": "threaten",
+    "adj": "threatening",
+    "adv": "threateningly"
+  },
+  {
+    "root": "donate",
+    "noun": "donation/donor",
+    "verb": "donate",
+    "adj": "",
+    "adv": ""
+  },
+  {
+    "root": "home",
+    "noun": "home/homelessness",
+    "verb": "home",
+    "adj": "homeless/homely/homeward",
+    "adv": "home/homewards"
+  },
+  {
+    "root": "identify",
+    "noun": "identification/identity",
+    "verb": "identify",
+    "adj": "identifiable/unidentified",
+    "adv": ""
+  },
+  {
+    "root": "kindness",
+    "noun": "kindness/unkindness",
+    "verb": "",
+    "adj": "kind/unkind",
+    "adv": "kindly/unkindly"
+  },
+  {
+    "root": "marry",
+    "noun": "marriage/remarriage",
+    "verb": "marry/remarry",
+    "adj": "married/unmarried/marriageable",
+    "adv": ""
+  },
+  {
+    "root": "outlaw",
+    "noun": "law/lawyer/outlaw/lawfulness/lawlessness",
+    "verb": "outlaw",
+    "adj": "lawful/unlawful",
+    "adv": "lawfully/unlawfully"
+  },
+  {
+    "root": "pacify",
+    "noun": "peace/peacefulness",
+    "verb": "pacify",
+    "adj": "peaceful/peaceable",
+    "adv": "peacefully/peaceably"
+  },
+  {
+    "root": "produce",
+    "noun": "produce/product/producer/production/productivity",
+    "verb": "produce",
+    "adj": "productive/unproductive",
+    "adv": "productively"
+  },
+  {
+    "root": "secure",
+    "noun": "security/insecurity",
+    "verb": "secure",
+    "adj": "secure/insecure",
+    "adv": "securely/insecurely"
+  },
+  {
+    "root": "world",
+    "noun": "world/underworld/worldliness",
+    "verb": "",
+    "adj": "world/worldly/unworldly/worldwide",
+    "adv": "worldwide"
+  },
+  {
+    "root": "consider",
+    "noun": "consideration",
+    "verb": "consider",
+    "adj": "considerate/considerable/inconsiderate/inconsiderable",
+    "adv": "considerately/considerably/inconsiderately"
+  },
+  {
+    "root": "distinct",
+    "noun": "distinction/distinctiveness",
+    "verb": "",
+    "adj": "distinct/indistinct/distinctive",
+    "adv": "distinctly/indistinctly/distinctively"
+  },
+  {
+    "root": "ease",
+    "noun": "ease/unease/easiness/uneasiness",
+    "verb": "ease",
+    "adj": "easy/uneasy",
+    "adv": "easily/uneasily"
+  },
+  {
+    "root": "embarrass",
+    "noun": "embarrassment",
+    "verb": "embarrass",
+    "adj": "embarrassing/embarrassed",
+    "adv": "embarrassingly"
+  },
+  {
+    "root": "emotion",
+    "noun": "emotion",
+    "verb": "emote",
+    "adj": "emotional/unemotional/emotive",
+    "adv": "emotionally/emotively"
+  },
+  {
+    "root": "able",
+    "noun": "ability/inability/disability",
+    "verb": "enable",
+    "adj": "able/unable/disabled",
+    "adv": ""
+  },
+  {
+    "root": "history",
+    "noun": "history/historian",
+    "verb": "",
+    "adj": "historic/historical",
+    "adv": "historically"
+  },
+  {
+    "root": "optimise",
+    "noun": "optimist/optimism",
+    "verb": "optimise",
+    "adj": "optimistic",
+    "adv": "optimistically"
+  },
+  {
+    "root": "tense",
+    "noun": "tension/tenseness",
+    "verb": "tense",
+    "adj": "tense",
+    "adv": "tensely"
+  },
+  {
+    "root": "chemical",
+    "noun": "chemical/chemist/chemistry",
+    "verb": "",
+    "adj": "chemical",
+    "adv": "chemically"
+  },
+  {
+    "root": "cosy",
+    "noun": "coziness",
+    "verb": "",
+    "adj": "cosy",
+    "adv": "cosily"
+  },
+  {
+    "root": "foreign",
+    "noun": "foreignness/foreigner",
+    "verb": "",
+    "adj": "foreign",
+    "adv": ""
+  },
+  {
+    "root": "involve",
+    "noun": "involvement",
+    "verb": "involve",
+    "adj": "involved",
+    "adv": ""
+  },
+  {
+    "root": "locate",
+    "noun": "location/locality/localisation",
+    "verb": "locate",
+    "adj": "local/localised",
+    "adv": "locally"
+  },
+  {
+    "root": "official",
+    "noun": "office/officer/official",
+    "verb": "officiate",
+    "adj": "official/unofficial/officious",
+    "adv": "officially/unofficiall/officiously"
+  },
+  {
+    "root": "person",
+    "noun": "person/personnel/personality/personification",
+    "verb": "personalise/personify",
+    "adj": "personal/impersonal/personalised/personable",
+    "adv": "personally/impersonally"
+  },
+  {
+    "root": "simplify",
+    "noun": "simplicity/simplification",
+    "verb": "simplify",
+    "adj": "simple/simplistic",
+    "adv": "simply/simplistically"
+  },
+  {
+    "root": "system",
+    "noun": "system/systematisation",
+    "verb": "systematise",
+    "adj": "systematic",
+    "adv": "systematically"
+  },
+  {
+    "root": "vary",
+    "noun": "variety/variance/variation",
+    "verb": "vary",
+    "adj": "varied/various/variable/invariable",
+    "adv": "variously/variably/invariably"
+  },
+  {
+    "root": "bore",
+    "noun": "boredom",
+    "verb": "bore",
+    "adj": "boring/bored",
+    "adv": "boringly"
+  },
+  {
+    "root": "compete",
+    "noun": "competition/competitor",
+    "verb": "compete",
+    "adj": "competitive",
+    "adv": "competitively"
+  },
+  {
+    "root": "discover",
+    "noun": "discovery/discoverer",
+    "verb": "discover",
+    "adj": "discoverable/undiscoverable",
+    "adv": ""
+  },
+  {
+    "root": "distract",
+    "noun": "distraction/distractor",
+    "verb": "distract",
+    "adj": "distracting/distracted",
+    "adv": "distractedly"
+  },
+  {
+    "root": "electrify",
+    "noun": "electricity/electrician",
+    "verb": "electrify",
+    "adj": "electric/electrical",
+    "adv": "electrically"
+  },
+  {
+    "root": "prioritise",
+    "noun": "priority",
+    "verb": "prioritise",
+    "adj": "",
+    "adv": ""
+  },
+  {
+    "root": "promote",
+    "noun": "promotion/promoter",
+    "verb": "promote",
+    "adj": "promotional",
+    "adv": ""
+  },
+  {
+    "root": "relax",
+    "noun": "relaxation",
+    "verb": "relax",
+    "adj": "relaxed/relaxing",
+    "adv": ""
+  },
+  {
+    "root": "stress",
+    "noun": "stress",
+    "verb": "stress",
+    "adj": "stressful/stressed",
+    "adv": "stressfully"
+  },
+  {
+    "root": "versatile",
+    "noun": "versatility",
+    "verb": "",
+    "adj": "versatile",
+    "adv": ""
+  },
+  {
+    "root": "addict",
+    "noun": "addiction",
+    "verb": "addict",
+    "adj": "addicted/addictive",
+    "adv": ""
+  },
+  {
+    "root": "break",
+    "noun": "break/breakage",
+    "verb": "break",
+    "adj": "breakable/unbreakable/broken/unbroken",
+    "adv": ""
+  },
+  {
+    "root": "comfort",
+    "noun": "comfort/discomfort/comforter",
+    "verb": "comfort",
+    "adj": "comfortable/uncomfortable/comforting",
+    "adv": "comfortably/uncomfortably/comfortingly"
+  },
+  {
+    "root": "connect",
+    "noun": "connection/connector",
+    "verb": "connect/disconnect",
+    "adj": "connected/disconnected/unconnected",
+    "adv": ""
+  },
+  {
+    "root": "contribute",
+    "noun": "contribution/contributor",
+    "verb": "contribute",
+    "adj": "contributory/contributive",
+    "adv": ""
+  },
+  {
+    "root": "generate",
+    "noun": "generation/generator",
+    "verb": "generate",
+    "adj": "generational/generative",
+    "adv": "generatively"
+  },
+  {
+    "root": "important",
+    "noun": "importance",
+    "verb": "",
+    "adj": "important/unimportant",
+    "adv": "importantly"
+  },
+  {
+    "root": "low",
+    "noun": "",
+    "verb": "lower",
+    "adj": "low",
+    "adv": "low"
+  },
+  {
+    "root": "obese",
+    "noun": "obesity",
+    "verb": "",
+    "adj": "obese",
+    "adv": ""
+  },
+  {
+    "root": "pharmacy",
+    "noun": "pharmacy/pharmacist",
+    "verb": "",
+    "adj": "pharmaceutical",
+    "adv": ""
+  },
+  {
+    "root": "dispose",
+    "noun": "disposal/disposability",
+    "verb": "dispose",
+    "adj": "disposable",
+    "adv": ""
+  },
+  {
+    "root": "event",
+    "noun": "event/eventuality",
+    "verb": "eventuate",
+    "adj": "eventful/uneventful/eventual",
+    "adv": "eventfully/uneventfully/eventually"
+  },
+  {
+    "root": "extend",
+    "noun": "extension",
+    "verb": "extend",
+    "adj": "extended/extensive",
+    "adv": "extensively"
+  },
+  {
+    "root": "fear",
+    "noun": "fear/fearfulness/fearlessness",
+    "verb": "fear",
+    "adj": "fearful/fearless/fearsome",
+    "adv": "fearfully/fearlessly"
+  },
+  {
+    "root": "imagine",
+    "noun": "imagination",
+    "verb": "imagine",
+    "adj": "imaginable/unimaginable/imaginary/imaginative/unimaginative/unimagined",
+    "adv": ""
+  },
+  {
+    "root": "major",
+    "noun": "major/majority",
+    "verb": "",
+    "adj": "major",
+    "adv": ""
+  },
+  {
+    "root": "necessary",
+    "noun": "necessity",
+    "verb": "necessitate",
+    "adj": "necessary/unnecessary",
+    "adv": "necessarily/unnecessarily"
+  },
+  {
+    "root": "popularise",
+    "noun": "popularity/unpopularity",
+    "verb": "popularise",
+    "adj": "popular/unpopular",
+    "adv": "popularly"
+  },
+  {
+    "root": "require",
+    "noun": "requirement",
+    "verb": "require",
+    "adj": "",
+    "adv": ""
+  },
+  {
+    "root": "subscribe",
+    "noun": "subscription/subscriber",
+    "verb": "subscribe",
+    "adj": "",
+    "adv": ""
+  },
+  {
+    "root": "admire",
+    "noun": "admiration/admirer",
+    "verb": "admire",
+    "adj": "admired/admiring/admirable",
+    "adv": "admirably/admiringly"
+  },
+  {
+    "root": "disturb",
+    "noun": "disturbance",
+    "verb": "disturb",
+    "adj": "disturbed/undisturbed/disturbing",
+    "adv": "disturbingly"
+  },
+  {
+    "root": "machine",
+    "noun": "machine/machinery/mechanic/mechanism",
+    "verb": "machine/mechanise",
+    "adj": "mechanical/mechanised/mechanistic",
+    "adv": "mechanically/mechanistically"
+  },
+  {
+    "root": "method",
+    "noun": "method/methodology",
+    "verb": "",
+    "adj": "methodical/methodological",
+    "adv": "methodically"
+  },
+  {
+    "root": "nutrition",
+    "noun": "nutrient/nutrition/nutritionist",
+    "verb": "",
+    "adj": "nutritious/nutritional",
+    "adv": "nutritiously/nutritionally"
+  },
+  {
+    "root": "opportunity",
+    "noun": "opportunity/opportunist/opportunism",
+    "verb": "",
+    "adj": "opportunistic",
+    "adv": "opportunistically"
+  },
+  {
+    "root": "scene",
+    "noun": "scene/scenery",
+    "verb": "",
+    "adj": "scenic",
+    "adv": "scenically"
+  },
+  {
+    "root": "summarise",
+    "noun": "summary",
+    "verb": "summarise",
+    "adj": "summary",
+    "adv": "summarily"
+  },
+  {
+    "root": "truth",
+    "noun": "truth/untruth/truthfulness",
+    "verb": "",
+    "adj": "true/untrue/truthful/untruthful",
+    "adv": "truly/truthfully/untruthfully"
+  },
+  {
+    "root": "understand",
+    "noun": "understanding",
+    "verb": "understand",
+    "adj": "understandable",
+    "adv": "understandably"
+  }
 ];
 
 let masteredWords = JSON.parse(localStorage.getItem('masteredWords')) || [];
@@ -162,44 +1419,77 @@ function checkAnswers() {
 
         types.forEach(type => {
             const input = document.getElementById(`${type}-${index}`);
-            const userVal = input.value.trim().toLowerCase();
-            const correctVal = w[type].toLowerCase();
+            if (!input) return; // Phòng trường hợp element không tồn tại
 
-            // Logic kiểm tra: Đúng nếu khớp hoàn toàn hoặc khớp 1 phần trong các từ cách nhau bởi dấu /
+            const userVal = input.value.trim().toLowerCase();
+            // Lấy giá trị đúng, nếu null/undefined thì coi là chuỗi rỗng
+            const correctRaw = (w[type] || "").toLowerCase();
+
             let isCorrect = false;
-            if (correctVal === "") {
+
+            if (correctRaw === "") {
+                // Nếu đáp án trống, người dùng cũng phải để trống
                 if (userVal === "") isCorrect = true;
             } else {
-                const possibleAnswers = correctVal.split('/').map(v => v.trim());
-                if (possibleAnswers.includes(userVal)) isCorrect = true;
+                // Phân rã các đáp án bằng dấu / thành mảng và dọn dẹp khoảng trắng
+                const possibleAnswers = correctRaw.split('/').map(v => v.trim());
+                
+                // Kiểm tra xem giá trị người dùng nhập có nằm trong danh sách đáp án không
+                if (possibleAnswers.includes(userVal)) {
+                    isCorrect = true;
+                }
             }
 
+            // Cập nhật giao diện dựa trên kết quả
             if (isCorrect) {
-                input.className = 'correct';
+                input.classList.remove('wrong');
+                input.classList.add('correct');
+                input.title = ""; // Xóa gợi ý nếu đã sửa đúng
                 totalCorrectCells++;
             } else {
-                input.className = 'wrong';
+                input.classList.remove('correct');
+                input.classList.add('wrong');
+                // Hiển thị gợi ý khi di chuột vào ô sai
                 input.title = `Đáp án đúng: ${w[type] || '(Không có)'}`;
                 isWordPerfect = false;
             }
         });
 
+        // Xử lý logic từ đã thuộc (Mastered)
+        const noteElement = document.getElementById(`ans-note-${index}`);
         if (isWordPerfect) {
-            if (!masteredWords.includes(w.root)) masteredWords.push(w.root);
+            if (!masteredWords.includes(w.root)) {
+                masteredWords.push(w.root);
+            }
             perfectWords++;
+            if (noteElement) noteElement.innerHTML = ""; // Ẩn ghi chú nếu đã đúng hết
         } else {
-            document.getElementById(`ans-note-${index}`).innerHTML = 
-                `Đáp án: N: ${w.noun} | V: ${w.verb} | Adj: ${w.adj} | Adv: ${w.adv}`;
+            if (noteElement) {
+                noteElement.innerHTML = `
+                    <small style="color: #666">
+                        <b>N:</b> ${w.noun || '-'} | 
+                        <b>V:</b> ${w.verb || '-'} | 
+                        <b>Adj:</b> ${w.adj || '-'} | 
+                        <b>Adv:</b> ${w.adv || '-'}
+                    </small>`;
+            }
         }
     });
 
+    // Lưu vào LocalStorage
     localStorage.setItem('masteredWords', JSON.stringify(masteredWords));
     
-    document.getElementById('score').innerHTML = `Đúng ${totalCorrectCells}/20 ô. <br> 
-    Thêm được <b>${perfectWords}</b> từ vào danh sách đã thuộc (sẽ không xuất hiện lại lượt tới).`;
+    // Cập nhật điểm số và thông báo
+    const totalPossibleCells = currentQuizWords.length * 4;
+    document.getElementById('score').innerHTML = `
+        Đúng <b>${totalCorrectCells}</b>/${totalPossibleCells} ô. <br> 
+        Bạn đã thuộc thêm <b>${perfectWords}</b> từ mới (Tổng: ${masteredWords.length}).
+    `;
     
-    document.getElementById('action-btn').innerText = "LÀM TIẾP 5 TỪ KHÁC";
-    document.getElementById('action-btn').onclick = startQuiz;
+    // Đổi trạng thái nút điều hướng
+    const actionBtn = document.getElementById('action-btn');
+    actionBtn.innerText = "LÀM TIẾP 5 TỪ KHÁC";
+    actionBtn.onclick = startQuiz;
 }
 </script>
 </body>
