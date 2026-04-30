@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học Tiếng Anh 9 - 115 Cụm Từ</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --bg: #f8f9fa;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: var(--primary); margin-bottom: 5px; }
+        .stats { display: flex; justify-content: space-around; background: #ecf0f1; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-weight: bold; }
+        .quiz-card { border: 1px solid #ddd; padding: 20px; border-radius: 10px; margin-bottom: 15px; transition: 0.3s; position: relative; }
+        .question-text { font-size: 1.1em; font-weight: 600; margin-bottom: 15px; color: var(--primary); }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .option-btn { padding: 12px; border: 2px solid #eee; background: white; border-radius: 8px; cursor: pointer; text-align: left; transition: 0.2s; font-size: 0.95em; }
+        .option-btn:hover:not(:disabled) { border-color: var(--secondary); background: #f0f7ff; }
+        .option-btn.correct { background-color: var(--success) !important; color: white; border-color: var(--success); }
+        .option-btn.wrong { background-color: var(--danger) !important; color: white; border-color: var(--danger); }
+        .controls { display: flex; gap: 10px; margin-top: 20px; }
+        button.main-btn { flex: 1; padding: 15px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; font-size: 1em; transition: 0.3s; }
+        .btn-next { background-color: var(--secondary); }
+        .btn-score { background-color: var(--primary); }
+        .btn-next:hover { opacity: 0.9; transform: translateY(-2px); }
+        .phrase-hint { margin-top: 10px; font-style: italic; color: #7f8c8d; display: none; font-size: 0.9em; border-top: 1px dashed #ddd; padding-top: 8px; }
+        .progress-bar { height: 10px; background: #eee; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--secondary); width: 0%; transition: 0.5s; }
+        @media (max-width: 600px) { .options-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>ÔN LUYỆN CỤM TỪ TIẾNG ANH 9</h1>
+    <p style="text-align: center; color: #666; margin-bottom: 20px;">Ngân hàng 115 câu hỏi trắc nghiệm rèn luyện ngữ cảnh</p>
+    
+    <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+
+    <div class="stats">
+        <div>Đúng: <span id="correctCount" style="color: var(--success);">0</span></div>
+        <div>Đã làm: <span id="totalDone">0</span></div>
+        <div>Tỉ lệ: <span id="accuracy">0%</span></div>
+    </div>
+
+    <div id="quizArea"></div>
+
+    <div class="controls">
+        <button class="main-btn btn-score" onclick="checkAll()">CHẤM ĐIỂM 5 CÂU NÀY</button>
+        <button class="main-btn btn-next" onclick="loadBatch()">ĐỔI 5 CÂU KHÁC</button>
+    </div>
+</div>
+
+<script>
+    const allData = [{"id": 1, "q": "We should ______ the use of plastic bags to protect our environment.", "o": ["cut down on", "put on", "carry out", "take off"], "a": "cut down on", "p": "cut down on (cắt giảm)"}, {"id": 2, "q": "You would understand why I'm angry if you ______.", "o": ["put yourself in my shoes", "take care of", "get on with", "look after"], "a": "put yourself in my shoes", "p": "put yourself in my shoes (đặt mình vào hoàn cảnh của tôi)"}, {"id": 3, "q": "He studies hard ______ he can pass the exam.", "o": ["in order that", "although", "because", "despite"], "a": "in order that", "p": "in order that = so that (để mà)"}, {"id": 4, "q": "______ it rained heavily, they went out for a walk.", "o": ["Although", "Because", "Despite", "In order that"], "a": "Although", "p": "although = even though = though (mặc dù)"}, {"id": 5, "q": "The scientists decided to ______ a series of experiments.", "o": ["carry out", "turn off", "give up", "look for"], "a": "carry out", "p": "carry out = conduct (tiến hành)"}, {"id": 6, "q": "She is a ______ person who always puts her children first.", "o": ["family-oriented", "famous for", "stressed out", "bilingual"], "a": "family-oriented", "p": "family-oriented (hướng về gia đình)"}, {"id": 7, "q": "Don't ______ too much ______ your children about their grades.", "o": ["put pressure on", "pay respect to", "take care of", "get on with"], "a": "put pressure on", "p": "put pressure on (gây áp lực lên)"}, {"id": 8, "q": "We should ______ our teachers and elders.", "o": ["pay respect to", "look down on", "make fun of", "turn down"], "a": "pay respect to", "p": "pay respect to (kính trọng)"}, {"id": 9, "q": "They are going to ______ next month.", "o": ["get married to", "participate in", "remind of", "succeed in"], "a": "get married to", "p": "get married to (kết hôn với)"}, {"id": 10, "q": "Who will ______ your baby when you are away?", "o": ["take care of", "take off", "turn off", "get by"], "a": "take care of", "p": "take care of = look after = care for (chăm sóc)"}, {"id": 11, "q": "All students are encouraged to ______ school activities.", "o": ["participate in", "deal with", "live on", "suffer from"], "a": "participate in", "p": "participate in = take part in = join in (tham gia)"}, {"id": 12, "q": "My father ______ going to the beach this summer.", "o": ["suggested", "reminded", "encouraged", "wanted"], "a": "suggested", "p": "suggest + Ving (đề nghị)"}, {"id": 13, "q": "This city is ______ its beautiful ancient buildings.", "o": ["famous for", "fond of", "keen on", "interested in"], "a": "famous for", "p": "famous for (nổi tiếng về)"}, {"id": 14, "q": "Please ______ me ______ the meeting tomorrow morning.", "o": ["remind...of", "remind...to", "remind...for", "remind...at"], "a": "remind...of", "p": "remind...of (nhắc nhở về)"}, {"id": 15, "q": "I really ______ my new classmates.", "o": ["get on with", "get over", "get by", "get off"], "a": "get on with", "p": "get on with = be on good terms with (hòa thuận)"}, {"id": 16, "q": "We have to ______ the problem as soon as possible.", "o": ["deal with", "live on", "dress up", "pass away"], "a": "deal with", "p": "deal with (giải quyết)"}, {"id": 17, "q": "Many people in this village ______ farming.", "o": ["live on", "turn on", "put on", "take off"], "a": "live on", "p": "live on (sống dựa vào)"}, {"id": 18, "q": "The Opera House is a famous ______ in Hanoi.", "o": ["place of interest", "generation gap", "high cost", "natural material"], "a": "place of interest", "p": "place of interest (địa điểm hấp dẫn)"}, {"id": 19, "q": "The ______ between parents and children can be difficult to bridge.", "o": ["generation gap", "due date", "tourist attraction", "nuclear family"], "a": "generation gap", "p": "generation gap (khoảng cách thế hệ)"}, {"id": 20, "q": "I can ______ English, but I'm not very fluent.", "o": ["get by in", "get over", "get off", "get up"], "a": "get by in", "p": "get by in (biết sơ sơ)"}, {"id": 21, "q": "The Eiffel Tower is a popular ______ in France.", "o": ["tourist attraction", "place of interest", "generation gap", "package tour"], "a": "tourist attraction", "p": "tourist attraction (điểm thu hút khách du lịch)"}, {"id": 22, "q": "It took her a long time to ______ the shock of his death.", "o": ["get over", "get on", "get off", "get by"], "a": "get over", "p": "get over the shock (vượt qua cú sốc)"}, {"id": 23, "q": "You should ______ for the party tonight.", "o": ["dress up", "turn off", "put on", "take off"], "a": "dress up", "p": "dress up (ăn diện)"}, {"id": 24, "q": "Please ______ the lights before you leave the room.", "o": ["turn off", "turn on", "switch on", "set off"], "a": "turn off", "p": "turn off = switch off (tắt)"}, {"id": 25, "q": "Can you ______ the television? I want to watch the news.", "o": ["turn on", "turn off", "switch off", "pass away"], "a": "turn on", "p": "turn on = switch on (bật)"}, {"id": 26, "q": "His grandfather ______ last night at the age of 90.", "o": ["passed away", "gave up", "looked for", "stood up"], "a": "passed away", "p": "pass away (qua đời)"}, {"id": 27, "q": "The plane will ______ in ten minutes.", "o": ["take off", "put on", "set off", "go on"], "a": "take off", "p": "take off (cất cánh/cởi đồ)"}, {"id": 28, "q": "It's cold outside. Remember to ______ your warm coat.", "o": ["put on", "take off", "dress up", "set off"], "a": "put on", "p": "put on (mặc vào)"}, {"id": 29, "q": "The ______ in big cities is increasing every year.", "o": ["high cost of living", "tourist attraction", "generation gap", "nuclear family"], "a": "high cost of living", "p": "high cost of living (chi phí sinh hoạt cao)"}, {"id": 30, "q": "He is ______ a terrible headache.", "o": ["suffering from", "contributing to", "focusing on", "succeeding in"], "a": "suffering from", "p": "suffer from (chịu đựng)"}, {"id": 31, "q": "Air pollution ______ global warming.", "o": ["contributes to", "suffers from", "succeeds in", "deals with"], "a": "contributes to", "p": "contribute to (đóng góp/gây ra)"}, {"id": 32, "q": "______, I would like to say thank you for your attention.", "o": ["To conclude", "Go on", "Turn down", "Set off"], "a": "To conclude", "p": "To conclude / In conclusion (kết luận)"}, {"id": 33, "q": "Please ______ with your work. Don't let me disturb you.", "o": ["go on", "turn down", "set off", "look up"], "a": "go on", "p": "go on = continue (tiếp tục)"}, {"id": 34, "q": "She had to ______ the job offer because the salary was too low.", "o": ["turn down", "turn on", "turn off", "go on"], "a": "turn down", "p": "turn down (từ chối)"}, {"id": 35, "q": "We will ______ early in the morning to avoid traffic jams.", "o": ["set off", "take off", "put on", "go on"], "a": "set off", "p": "set off (khởi hành)"}, {"id": 36, "q": "I always ______ my older brother for his intelligence.", "o": ["look up to", "look down on", "make fun of", "look for"], "a": "look up to", "p": "look up to = admire (ngưỡng mộ)"}, {"id": 37, "q": "You should never ______ those who are less fortunate than you.", "o": ["look down on", "look up to", "pay respect to", "look for"], "a": "look down on", "p": "look down on (coi thường)"}, {"id": 38, "q": "It's not polite to ______ others' mistakes.", "o": ["make fun of", "pay respect to", "succeed in", "deal with"], "a": "make fun of", "p": "make fun of (chọc ghẹo)"}, {"id": 39, "q": "You did a ______! I'm proud of you.", "o": ["good job", "due date", "nuclear family", "smooth trip"], "a": "good job", "p": "well-done = good job (tốt)"}, {"id": 40, "q": "You should ______ your study more if you want to pass.", "o": ["focus on", "suffer from", "contribute to", "succeed in"], "a": "focus on", "p": "focus on (tập trung vào)"}, {"id": 41, "q": "We need all the facts before we can make an ______.", "o": ["informed decision", "informed choice", "informed way", "informed job"], "a": "informed decision", "p": "informed decision (quyết định sáng suốt)"}, {"id": 42, "q": "Many students feel ______ before their final exams.", "o": ["stressed out", "over the moon", "out of this world", "spot on"], "a": "stressed out", "p": "stressed out (căng thẳng)"}, {"id": 43, "q": "In an emergency, it's vital to ______.", "o": ["stay calm", "get angry", "give up", "pass away"], "a": "stay calm", "p": "stay calm (bình tĩnh)"}, {"id": 44, "q": "______, this is the best restaurant in town.", "o": ["As far as I know", "In conclusion", "Because", "Although"], "a": "As far as I know", "p": "As far as I know (theo tôi được biết)"}, {"id": 45, "q": "Never ______ your dreams, no matter how hard it is.", "o": ["give up", "go on", "set off", "take off"], "a": "give up", "p": "give up = quit (từ bỏ)"}, {"id": 46, "q": "If you don't know the word, you can ______ in the dictionary.", "o": ["look it up", "look for it", "look after it", "look at it"], "a": "look it up", "p": "look up (tra cứu)"}, {"id": 47, "q": "I'm ______ my keys. Have you seen them?", "o": ["looking for", "looking up", "looking after", "looking down"], "a": "looking for", "p": "look for (tìm kiếm)"}, {"id": 48, "q": "He ______ winning the first prize in the competition.", "o": ["succeeded in", "interested in", "famous for", "fond of"], "a": "succeeded in", "p": "succeed in (thành công)"}, {"id": 49, "q": "Please ______ what I am saying.", "o": ["pay attention to", "pay respect to", "put pressure on", "deal with"], "a": "pay attention to", "p": "pay attention to (chú ý)"}, {"id": 50, "q": "The ______ for the assignment is next Friday.", "o": ["due date", "generation gap", "package tour", "high cost"], "a": "due date", "p": "due date = deadline (hạn chót)"}, {"id": 51, "q": "I went to the airport ______ taxi.", "o": ["by", "in", "on", "with"], "a": "by", "p": "by + phương tiện giao thông (trừ on foot)"}, {"id": 52, "q": "There were many people ______ the bus this morning.", "o": ["on", "in", "by", "at"], "a": "on", "p": "on a bus, in a car/taxi"}, {"id": 53, "q": "______ he was tired, he finished his homework.", "o": ["Although", "But", "Because", "So"], "a": "Although", "p": "Cấu trúc Although (không dùng but)"}, {"id": 54, "q": "He was late ______ the traffic jam.", "o": ["because of", "so", "because", "although"], "a": "because of", "p": "Cấu trúc Because (không dùng so)"}, {"id": 55, "q": "Please be ______ for the meeting.", "o": ["on time", "in time", "at time", "for time"], "a": "on time", "p": "on time (đúng giờ), in time (kịp lúc)"}, {"id": 56, "q": "His answer was ______; exactly what I expected.", "o": ["spot on", "break the bank", "over the moon", "out of this world"], "a": "spot on", "p": "spot on = correct (chính xác)"}, {"id": 57, "q": "A luxury car like that will surely ______.", "o": ["break the bank", "pass away", "get over", "set off"], "a": "break the bank", "p": "break the bank (tốn nhiều tiền)"}, {"id": 58, "q": "We ______ petrol in the middle of the highway.", "o": ["run out of", "get by in", "look up", "put on"], "a": "run out of", "p": "run out of (hết/cạn kiệt)"}, {"id": 59, "q": "Children can ______ a new language very quickly.", "o": ["pick up", "take off", "turn on", "give up"], "a": "pick up", "p": "pick up a language (học lỏm)"}, {"id": 60, "q": "This course provides ______ for students.", "o": ["hands-on experience", "generation gap", "due date", "fixed itinerary"], "a": "hands-on experience", "p": "hands-on experience (kinh nghiệm thực tế)"}, {"id": 61, "q": "The scenery in the mountains is ______.", "o": ["out of this world", "spot on", "stressed out", "bilingual"], "a": "out of this world", "p": "out of this world (tuyệt vời)"}, {"id": 62, "q": "We only see each other ______.", "o": ["once in a blue moon", "on time", "in time", "spot on"], "a": "once in a blue moon", "p": "once in a blue moon (hiếm khi)"}, {"id": 63, "q": "My ______ is Vietnamese.", "o": ["first language", "foreign language", "second language", "bilingual"], "a": "first language", "p": "first language = mother tongue (tiếng mẹ đẻ)"}, {"id": 64, "q": "She is tired of her ______ and wants to start her own business.", "o": ["nine-to-five job", "package tour", "place of interest", "smooth trip"], "a": "nine-to-five job", "p": "nine-to-five job (việc hành chính)"}, {"id": 65, "q": "______ for your help.", "o": ["Thanks in advance", "Good job", "Well done", "Spot on"], "a": "Thanks in advance", "p": "Thanks in advance (cám ơn trước)"}, {"id": 66, "q": "You should ______ your flight at least a week before.", "o": ["book", "reserve", "pick up", "set off"], "a": "book", "p": "book = reserve (đặt trước)"}, {"id": 67, "q": "She was ______ when she received the scholarship.", "o": ["over the moon", "stressed out", "out of this world", "spot on"], "a": "over the moon", "p": "over the moon (vui sướng)"}, {"id": 68, "q": "It's time to ______ about which college to attend.", "o": ["make up your mind", "make fun of", "make a decision", "make an effort"], "a": "make up your mind", "p": "make up your mind = decide (quyết định)"}, {"id": 69, "q": "The tour has a ______ that cannot be changed.", "o": ["fixed itinerary", "package tour", "smooth trip", "domestic tour"], "a": "fixed itinerary", "p": "fixed itinerary (hành trình cố định)"}, {"id": 70, "q": "I wish you a ______ and a safe return.", "o": ["smooth trip", "due date", "generation gap", "nine-to-five job"], "a": "smooth trip", "p": "smooth trip (chuyến đi suôn sẻ)"}, {"id": 71, "q": "Scientists are studying the ______ of the Amazon rainforest.", "o": ["flora and fauna", "natural material", "generation gap", "nuclear family"], "a": "flora and fauna", "p": "flora and fauna (động thực vật)"}, {"id": 72, "q": "We prefer a ______ because everything is arranged for us.", "o": ["package tour", "domestic tour", "international tour", "fixed itinerary"], "a": "package tour", "p": "package tour (tour trọn gói)"}, {"id": 73, "q": "A ______ consists of only parents and children.", "o": ["nuclear family", "extended family", "generation gap", "family-oriented"], "a": "nuclear family", "p": "nuclear family (gia đình 2 thế hệ)"}, {"id": 74, "q": "Living with an ______ means you have many relatives around.", "o": ["extended family", "nuclear family", "generation gap", "family-oriented"], "a": "extended family", "p": "extended family (đại gia đình)"}, {"id": 75, "q": "He has to work two jobs to ______.", "o": ["earn a living", "get by in", "live on", "break the bank"], "a": "earn a living", "p": "earn a living (kiếm sống)"}, {"id": 76, "q": "They usually go on a ______ within Vietnam for their summer holiday.", "o": ["domestic tour", "international tour", "package tour", "fixed itinerary"], "a": "domestic tour", "p": "domestic tour (tour trong nước)"}, {"id": 77, "q": "She is ______ English and French.", "o": ["bilingual in", "fluent in", "good at", "famous for"], "a": "bilingual in", "p": "bilingual in (song ngữ)"}, {"id": 78, "q": "He is ______ English after living in London for 5 years.", "o": ["fluent in", "bilingual in", "good at", "famous for"], "a": "fluent in", "p": "fluent in (trôi chảy)"}, {"id": 79, "q": "How much is the ______ for the museum?", "o": ["entrance ticket", "due date", "high cost", "smooth trip"], "a": "entrance ticket", "p": "entrance ticket (vé vào cổng)"}, {"id": 80, "q": "Many young people ______ jobs in big cities.", "o": ["hunt for", "look for", "look up", "look after"], "a": "hunt for", "p": "hunt for (săn tìm)"}, {"id": 81, "q": "I will do my best to ______.", "o": ["pursue my dream", "give up", "set off", "get by"], "a": "pursue my dream", "p": "pursue my dream (theo đuổi giấc mơ)"}, {"id": 82, "q": "Wood and cotton are types of ______.", "o": ["natural material", "flora and fauna", "nuclear family", "fixed itinerary"], "a": "natural material", "p": "natural material (nguyên liệu tự nhiên)"}, {"id": 83, "q": "She decided to ______ pink for the summer.", "o": ["dye her hair", "dress up", "put on", "take off"], "a": "dye her hair", "p": "dye the hair (nhuộm tóc)"}, {"id": 84, "q": "When the teacher asked the question, ______.", "o": ["my mind went blank", "I was over the moon", "I stayed calm", "I gave up"], "a": "my mind went blank", "p": "my mind went blank (đầu óc trống rỗng)"}, {"id": 85, "q": "You should ______ the poem ______ for the test.", "o": ["learn...by heart", "learn...by rote", "learn...in time", "learn...on time"], "a": "learn...by heart", "p": "learn by heart (học thuộc lòng)"}, {"id": 86, "q": "Mechanical learning or ______ is not effective.", "o": ["learn by rote", "learn by heart", "learn in time", "learn on time"], "a": "learn by rote", "p": "learn by rote (học vẹt)"}, {"id": 87, "q": "She ______ a lot of money ______ shopping.", "o": ["spends...on", "takes...to", "spends...with", "takes...for"], "a": "spends...on", "p": "Spend + time/money + Ving/on N"}, {"id": 88, "q": "I am ______ seeing you soon.", "o": ["looking forward to", "looking for", "looking after", "looking up"], "a": "looking forward to", "p": "Look forward to + Ving"}, {"id": 89, "q": "I ______ going for a picnic this weekend.", "o": ["suggest", "encourage", "want", "plan"], "a": "suggest", "p": "Suggest + Ving"}, {"id": 90, "q": "I ______ playing football with my friends.", "o": ["adore", "suggest", "want", "plan"], "a": "adore", "p": "Like/Adore/Love/Enjoy/Hate + Ving"}, {"id": 91, "q": "______ opening the window?", "o": ["Would you mind", "Do you want", "Could you", "Would you like"], "a": "Would you mind", "p": "Mind/Would you mind + Ving"}, {"id": 92, "q": "This book is ______.", "o": ["worth reading", "worth to read", "worth read", "worth for reading"], "a": "worth reading", "p": "To be worth + Ving"}, {"id": 93, "q": "I ______ tea ______ coffee.", "o": ["prefer...to", "prefer...than", "would like...to", "would love...to"], "a": "prefer...to", "p": "Prefer Ving to Ving"}, {"id": 94, "q": "He ______ stealing the money.", "o": ["denied", "suggested", "encouraged", "wanted"], "a": "denied", "p": "Deny + Ving"}, {"id": 95, "q": "______ the rain, they went to school on time.", "o": ["Despite", "Although", "Because", "So"], "a": "Despite", "p": "Despite/In spite of + Ving/N"}, {"id": 96, "q": "She is ______ listening to music.", "o": ["fond of", "keen on", "interested in", "all are correct"], "a": "all are correct", "p": "Fond of / Keen on / Interested in + Ving"}, {"id": 97, "q": "Hard work is ______ success.", "o": ["the key to", "the way to", "the point of", "the part of"], "a": "the key to", "p": "The key to + Ving/N"}, {"id": 98, "q": "I ______ getting up early in the morning.", "o": ["am used to", "used to", "get to", "be to"], "a": "am used to", "p": "Get/be used to + Ving (quen với)"}, {"id": 99, "q": "She ______ laughing when she saw the clown.", "o": ["couldn't help", "couldn't stop", "couldn't wait", "couldn't stand"], "a": "couldn't help", "p": "Couldn't help Ving (không thể không)"}, {"id": 100, "q": "She is good ______ playing the piano.", "o": ["at", "in", "on", "with"], "a": "at", "p": "Sau giới từ + Ving"}, {"id": 101, "q": "It ______ me two hours ______ my homework.", "o": ["takes...to do", "spends...doing", "takes...doing", "spends...to do"], "a": "takes...to do", "p": "Take + time + to V"}, {"id": 102, "q": "I ______ to have a cup of coffee.", "o": ["would like", "like", "enjoy", "adore"], "a": "would like", "p": "Would like/love/prefer + to V"}, {"id": 103, "q": "My teacher ______ me ______ harder.", "o": ["encouraged...to study", "suggested...studying", "wanted...studying", "planned...to study"], "a": "encouraged...to study", "p": "Encourage somebody to V"}, {"id": 104, "q": "I ______ to go abroad next year.", "o": ["want", "suggest", "adore", "enjoy"], "a": "want", "p": "Want + to V"}, {"id": 105, "q": "I ______ to stay at home tonight.", "o": ["prefer", "suggest", "adore", "mind"], "a": "prefer", "p": "Prefer + to V"}, {"id": 106, "q": "We ______ to visit Hue next month.", "o": ["plan", "suggest", "mind", "deny"], "a": "plan", "p": "Plan + to V"}, {"id": 107, "q": "He ______ to be very happy today.", "o": ["seems", "suggests", "wants", "plans"], "a": "seems", "p": "Seem + to V"}, {"id": 108, "q": "I ______ to see the movie.", "o": ["can't wait", "can't help", "can't stop", "can't mind"], "a": "can't wait", "p": "Can't wait + to V"}, {"id": 109, "q": "You ______ brush your teeth twice a day.", "o": ["should", "may", "might", "can"], "a": "should", "p": "Model Verbs + V"}, {"id": 110, "q": "I ______ live in the countryside when I was a child.", "o": ["used to", "am used to", "get used to", "was used to"], "a": "used to", "p": "Used to + V (đã từng)"}, {"id": 111, "q": "______ we go to the cinema tonight?", "o": ["Why don't", "How about", "What about", "Let's"], "a": "Why don't", "p": "Why don't we + V"}, {"id": 112, "q": "______ go to the beach!", "o": ["Let's", "Why don't", "How about", "What about"], "a": "Let's", "p": "Let's + V"}, {"id": 113, "q": "You ______ obey the traffic rules.", "o": ["must", "can", "may", "might"], "a": "must", "p": "Must + V"}, {"id": 114, "q": "He ______ speak three languages.", "o": ["can", "must", "should", "ought to"], "a": "can", "p": "Can + V"}, {"id": 115, "q": "It ______ rain tomorrow.", "o": ["might", "should", "must", "ought to"], "a": "might", "p": "Might + V"}];
+
+    // Quản lý trạng thái học tập
+    let userStats = JSON.parse(localStorage.getItem('eng9_stats')) || {
+        correct: 0,
+        total: 0,
+        weights: {} 
+    };
+
+    // Khởi tạo trọng số
+    allData.forEach(q => {
+        if (userStats.weights[q.id] === undefined) userStats.weights[q.id] = 10;
+    });
+
+    let currentBatch = [];
+    let batchAnswers = {};
+
+    function saveStats() {
+        localStorage.setItem('eng9_stats', JSON.stringify(userStats));
+        updateStatsUI();
+    }
+
+    function updateStatsUI() {
+        document.getElementById('correctCount').innerText = userStats.correct;
+        document.getElementById('totalDone').innerText = userStats.total;
+        const acc = userStats.total === 0 ? 0 : Math.round((userStats.correct / userStats.total) * 100);
+        document.getElementById('accuracy').innerText = acc + '%';
+        
+        const mastered = Object.values(userStats.weights).filter(w => w < 5).length;
+        document.getElementById('progressFill').style.width = (mastered / 115 * 100) + '%';
+    }
+
+    function loadBatch() {
+        const quizArea = document.getElementById('quizArea');
+        quizArea.innerHTML = '';
+        batchAnswers = {};
+        
+        const sortedIds = Object.keys(userStats.weights).sort((a, b) => userStats.weights[b] - userStats.weights[a]);
+        const pool = sortedIds.slice(0, 30);
+        const selectedIds = [];
+        const poolCopy = [...pool];
+        
+        while(selectedIds.length < 5 && poolCopy.length > 0) {
+            const idx = Math.floor(Math.random() * poolCopy.length);
+            selectedIds.push(parseInt(poolCopy.splice(idx, 1)[0]));
+        }
+
+        currentBatch = allData.filter(q => selectedIds.includes(q.id));
+
+        currentBatch.forEach((q, idx) => {
+            const card = document.createElement('div');
+            card.className = 'quiz-card';
+            card.id = `card-${q.id}`;
+            card.innerHTML = `
+                <div class="question-text">${idx + 1}. ${q.q}</div>
+                <div class="options-grid" id="options-${q.id}">
+                    ${q.o.map(opt => `<button class="option-btn" onclick="selectOption(${q.id}, '${opt}', this)">${opt}</button>`).join('')}
+                </div>
+                <div class="phrase-hint" id="hint-${q.id}">Cấu trúc: ${q.p}</div>
+            `;
+            quizArea.appendChild(card);
+        });
+        window.scrollTo(0,0);
+    }
+
+    function selectOption(id, val, btn) {
+        const parent = document.getElementById(`options-${id}`);
+        const btns = parent.querySelectorAll('.option-btn');
+        btns.forEach(b => b.style.borderColor = '#eee');
+        btn.style.borderColor = 'var(--secondary)';
+        batchAnswers[id] = val;
+    }
+
+    function checkAll() {
+        let correctInBatch = 0;
+        let answeredCount = 0;
+
+        currentBatch.forEach(q => {
+            const userAns = batchAnswers[q.id];
+            if (!userAns) return;
+
+            answeredCount++;
+            const parent = document.getElementById(`options-${q.id}`);
+            const btns = parent.querySelectorAll('.option-btn');
+            const hint = document.getElementById(`hint-${q.id}`);
+            
+            hint.style.display = 'block';
+            btns.forEach(b => {
+                b.disabled = true;
+                if (b.innerText === q.a) b.classList.add('correct');
+                if (b.innerText === userAns && userAns !== q.a) b.classList.add('wrong');
+            });
+
+            if (userAns === q.a) {
+                correctInBatch++;
+                userStats.weights[q.id] = Math.max(1, userStats.weights[q.id] - 3);
+            } else {
+                userStats.weights[q.id] += 5;
+            }
+        });
+
+        if (answeredCount > 0) {
+            userStats.correct += correctInBatch;
+            userStats.total += answeredCount;
+            saveStats();
+        } else {
+            alert('Vui lòng chọn đáp án trước khi chấm điểm!');
+        }
+    }
+
+    updateStatsUI();
+    loadBatch();
+</script>
+
+</body>
+</html>
