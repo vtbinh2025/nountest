@@ -3,33 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luyện tập Tiếng Anh - Hệ thống Trọng số</title>
+    <title>Luyện tập Word Form - Tiếng Anh 10</title>
     <style>
         :root {
             --primary: #2c3e50;
             --accent: #3498db;
             --success: #27ae60;
             --danger: #e74c3c;
-            --bg: #f8f9fa;
+            --bg: #f0f2f5;
         }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); padding: 20px; }
-        .container { max-width: 700px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: var(--primary); font-size: 1.5em; margin-bottom: 10px; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: var(--primary); border-bottom: 3px solid var(--accent); padding-bottom: 10px; }
+        .stats { display: flex; justify-content: space-around; background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-weight: bold; }
         
-        .status-bar { display: flex; justify-content: space-between; background: #eee; padding: 10px 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9em; }
+        .question-box { border: 1px solid #eee; padding: 20px; border-radius: 10px; margin-bottom: 15px; background: #fff; position: relative; }
+        .q-text { font-size: 1.1em; margin-bottom: 12px; line-height: 1.6; }
+        .word-bracket { color: var(--danger); font-weight: bold; }
         
-        .question-card { border: 1px solid #ddd; padding: 15px; border-radius: 10px; margin-bottom: 15px; background: #fff; }
-        .q-text { font-weight: bold; margin-bottom: 10px; color: #333; }
-        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .opt { padding: 10px; border: 1px solid #ccc; border-radius: 5px; cursor: pointer; text-align: left; background: #fff; font-size: 0.9em; }
-        .opt:hover { background: #f0f7ff; border-color: var(--accent); }
-        .opt.selected { background: #d6eaf8; border-color: var(--accent); }
-        .opt.correct { background: var(--success) !important; color: white; border-color: var(--success); }
-        .opt.wrong { background: var(--danger) !important; color: white; border-color: var(--danger); }
-        
-        .hint { margin-top: 10px; padding: 8px; background: #fff9db; border-left: 4px solid #f1c40f; display: none; font-size: 0.85em; color: #666; }
+        input[type="text"] {
+            width: 200px;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            outline: none;
+            transition: 0.3s;
+        }
+        input[type="text"]:focus { border-color: var(--accent); }
+        input.correct-input { border-color: var(--success); background: #e8f5e9; }
+        input.wrong-input { border-color: var(--danger); background: #ffebee; }
 
-        .controls { display: flex; gap: 10px; margin-top: 20px; }
+        .feedback { margin-top: 10px; font-weight: bold; display: none; }
+        .correct-txt { color: var(--success); }
+        .wrong-txt { color: var(--danger); }
+
+        .controls { display: flex; gap: 15px; margin-top: 25px; }
         button { flex: 1; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em; transition: 0.3s; }
         #grade-btn { background: var(--primary); color: white; }
         #next-btn { background: var(--accent); color: white; }
@@ -39,171 +48,145 @@
 <body>
 
 <div class="container">
-    <h1>LUYỆN TẬP PHẦN V (TRỌNG SỐ)</h1>
-    <div class="status-bar">
-        <span>Tiến độ: <b id="mastered-count">0</b>/60 câu đã thuộc</span>
-        <span>Lần này: <b id="current-score">0/5</b></span>
+    <h1>WORD FORM PRACTICE (SECTION V)</h1>
+    <div class="stats">
+        <span>Đã thuộc: <span id="mastered-count" style="color: var(--success)">0</span>/60</span>
+        <span>Điểm lần này: <span id="current-score">0/5</span></span>
     </div>
 
-    <div id="quiz-area">
-        </div>
+    <div id="quiz-area"></div>
 
     <div class="controls">
         <button id="grade-btn" onclick="gradeBatch()">CHẤM ĐIỂM</button>
-        <button id="next-btn" onclick="initBatch()">TẠO 5 CÂU KHÁC (ƯU TIÊN CÂU SAI)</button>
+        <button id="next-btn" onclick="initBatch()">5 CÂU TIẾP THEO (KHÓ)</button>
     </div>
 </div>
 
 <script>
-// 1. DỮ LIỆU JSON 60 CÂU
-const allQuestions = [
-    {id:1, q:"The river is getting dirtier. - ______ we reduce waste, it will be impossible to clean.", o:["If","Since","Unless","Although"], a:"Unless", h:"Unless = If...not (Nếu không)"},
-    {id:2, q:"I'm really fond ______ exploring different countries.", o:["of","at","on","for"], a:"of", h:"Fond of: Thích thú"},
-    {id:3, q:"I saw a flying saucer hovering ______ the mountains.", o:["over","at","about","into"], a:"over", h:"Over: Phía trên"},
-    {id:4, q:"Should we ______ the garage before the tornado arrives?", o:["take up","clean up","put up","look up"], a:"clean up", h:"Clean up: Dọn dẹp"},
-    {id:5, q:"The teacher suggested ______ a recycling program.", o:["to start","starting","started","starts"], a:"starting", h:"Suggest + Ving"},
-    {id:6, q:"If I ______ you, I would take a coat.", o:["am","was","were","be"], a:"were", h:"Điều kiện loại 2 (giả định)"},
-    {id:7, q:"English ______ as a second language in many countries.", o:["is spoken","speaks","is speaking","has spoken"], a:"is spoken", h:"Bị động hiện tại đơn"},
-    {id:8, q:"They have lived in this city ______ 2010.", o:["for","since","during","ago"], a:"since", h:"Since + mốc thời gian"},
-    {id:9, q:"She is the woman ______ won the first prize.", o:["who","whom","which","whose"], a:"who", h:"Who thay thế chủ ngữ người"},
-    {id:10, q:"Despite ______ very tired, he finished his work.", o:["be","being","he was","he is"], a:"being", h:"Despite + Ving"},
-    {id:11, q:"I wish I ______ more time to study.", o:["have","had","will have","am having"], a:"had", h:"Ước ở hiện tại (V2)"},
-    {id:12, q:"It's high time we ______ something to protect nature.", o:["do","did","to do","doing"], a:"did", h:"It's high time + V2"},
-    {id:13, q:"My mother used ______ to work by bus.", o:["go","going","to go","to going"], a:"to go", h:"Used to + V-inf"},
-    {id:14, q:"Weather was bad; ______, the match was not cancelled.", o:["therefore","however","so","because"], a:"however", h:"However: Tuy nhiên"},
-    {id:15, q:"The students were very ______ about the field trip.", o:["excited","exciting","excite","excitement"], a:"excited", h:"Adj-ed cho người"},
-    {id:16, q:"If we go on littering, environment will be ______ polluted.", o:["heavy","heavily","heaviness","heavying"], a:"heavily", h:"Trạng từ bổ nghĩa tính từ"},
-    {id:17, q:"That is the house ______ I was born.", o:["which","where","when","who"], a:"where", h:"Where chỉ nơi chốn"},
-    {id:18, q:"The Ao dai is the ______ dress of Vietnam.", o:["traditional","tradition","traditionally","traditionalism"], a:"traditional", h:"Adj + Noun"},
-    {id:19, q:"Can you turn ______ the light? It's too dark.", o:["on","off","in","for"], a:"on", h:"Turn on: Bật"},
-    {id:20, q:"I suggest ______ money for the poor.", o:["save","saving","to save","saved"], a:"saving", h:"Suggest + Ving"},
-    {id:21, q:"He is very proud ______ his new car.", o:["of","with","on","at"], a:"of", h:"Proud of: Tự hào"},
-    {id:22, q:"The man ______ is talking to her is my dad.", o:["who","which","whom","whose"], a:"who", h:"Mệnh đề quan hệ người"},
-    {id:23, q:"If it ______ tomorrow, we will stay at home.", o:["rains","will rain","rained","is raining"], a:"rains", h:"Điều kiện loại 1"},
-    {id:24, q:"The match was postponed ______ the heavy rain.", o:["because","because of","although","despite"], a:"because of", h:"Because of + Noun"},
-    {id:25, q:"You haven't finished your homework, ______?", o:["have you","haven't you","do you","don't you"], a:"have you", h:"Câu hỏi đuôi"},
-    {id:26, q:"What ______ you do if you saw a UFO?", o:["will","would","do","did"], a:"would", h:"Điều kiện loại 2"},
-    {id:27, q:"He is the most ______ person I've met.", o:["interest","interesting","interested","interestingly"], a:"interesting", h:"Adj-ing miêu tả vật/người"},
-    {id:28, q:"I'm looking forward to ______ from you.", o:["hear","hearing","heard","to hear"], a:"hearing", h:"Look forward to + Ving"},
-    {id:29, q:"The children are ______ playing in the garden.", o:["happy","happily","happiness","unhappy"], a:"happily", h:"Trạng từ bổ nghĩa động từ"},
-    {id:30, q:"She asked me where I ______ from.", o:["come","came","am coming","will come"], a:"came", h:"Gián tiếp (Lùi thì)"},
-    {id:31, q:"I ______ this book for two hours.", o:["read","am reading","have read","have been reading"], a:"have been reading", h:"HTHT Tiếp diễn"},
-    {id:32, q:"The exam was ______ than we expected.", o:["difficult","more difficult","most difficult","as difficult"], a:"more difficult", h:"So sánh hơn"},
-    {id:33, q:"We should use ______ energy.", o:["solar","sun","sunny","sunlight"], a:"solar", h:"Solar energy"},
-    {id:34, q:"He doesn't have a car, ______ he walks.", o:["but","so","because","although"], a:"so", h:"So: Vì vậy"},
-    {id:35, q:"The boy ______ leg was broken is in hospital.", o:["who","whom","whose","which"], a:"whose", h:"Whose: sở hữu"},
-    {id:36, q:"I suggest ______ the light before going out.", o:["turn off","turning off","to turn off","turned off"], a:"turning off", h:"Suggest Ving"},
-    {id:37, q:"She speaks English ______.", o:["good","well","bad","fluency"], a:"well", h:"Trạng từ cho động từ"},
-    {id:38, q:"The book ______ I bought is very good.", o:["who","whom","which","whose"], a:"which", h:"Which cho vật"},
-    {id:39, q:"If I had money, I ______ travel.", o:["will","would","shall","can"], a:"would", h:"Điều kiện loại 2"},
-    {id:40, q:"He was sick, ______ he went to school.", o:["but","so","therefore","however"], a:"but", h:"But: tương phản"},
-    {id:41, q:"The news ______ very surprising.", o:["is","are","were","be"], a:"is", h:"News + Động từ số ít"},
-    {id:42, q:"I'm interested ______ history.", o:["in","on","at","for"], a:"in", h:"Interested in"},
-    {id:43, q:"They ______ this house ten years ago.", o:["build","built","have built","are building"], a:"built", h:"Quá khứ (ago)"},
-    {id:44, q:"Would you mind ______ the window?", o:["open","opening","to open","opened"], a:"opening", h:"Mind + Ving"},
-    {id:45, q:"The man ______ helped us is a doctor.", o:["who","whom","which","whose"], a:"who", h:"Người - chủ ngữ"},
-    {id:46, q:"He is ______ enough to lift this.", o:["strong","strongly","strength","stronger"], a:"strong", h:"Adj + enough"},
-    {id:47, q:"Water is ______ hot for me to drink.", o:["too","so","such","very"], a:"too", h:"Too...to..."},
-    {id:48, q:"I haven't seen her ______ a long time.", o:["for","since","during","ago"], a:"for", h:"For + khoảng thời gian"},
-    {id:49, q:"She asked me if I ______ coffee.", o:["do","did","will","would"], a:"did", h:"Gián tiếp (Yes/No)"},
-    {id:50, q:"The car ______ he bought is expensive.", o:["who","whom","which","whose"], a:"which", h:"Vật - tân ngữ"},
-    {id:51, q:"I suggest ______ some posters.", o:["make","making","to make","made"], a:"making", h:"Suggest Ving"},
-    {id:52, q:"He is the student ______ always gets A.", o:["who","whom","which","whose"], a:"who", h:"Mệnh đề quan hệ"},
-    {id:53, q:"If we ______ water, we'll have none.", o:["waste","wasted","will waste","are wasting"], a:"waste", h:"ĐK Loại 1"},
-    {id:54, q:"She was ______ because she failed.", o:["happy","unhappy","happily","happiness"], a:"unhappy", h:"Tiền tố trái nghĩa"},
-    {id:55, q:"They've been friends ______ children.", o:["since","for","during","ago"], a:"since", h:"Since + Clause V2"},
-    {id:56, q:"The girl ______ is wearing blue is my sister.", o:["who","whom","which","whose"], a:"who", h:"Mệnh đề quan hệ"},
-    {id:57, q:"I wish it ______ stop raining.", o:["will","would","can","is"], a:"would", h:"Ước tương lai"},
-    {id:58, q:"They ______ for a long time.", o:["don't talk","haven't talked","didn't talk","aren't talking"], a:"haven't talked", h:"Hiện tại hoàn thành"},
-    {id:59, q:"The movie was so ______ that I slept.", o:["bore","boring","bored","boredom"], a:"boring", h:"Adj-ing cho vật"},
-    {id:60, q:"Congratulations! - ______", o:["Thank you","I'm sorry","You're welcome","No problem"], a:"Thank you", h:"Giao tiếp"}
+// DỮ LIỆU 60 CÂU WORD FORM TỪ FILE PDF
+const wordFormBank = [
+    {id:1, q:"The Ao dai is the ______ dress of Vietnamese women.", w:"TRADITION", a:"traditional"},
+    {id:2, q:"The internet has ______ developed in Vietnam.", o:"INCREDIBLE", a:"incredibly"},
+    {id:3, q:"We must learn about keeping the environment ______.", w:"POLLUTE", a:"unpolluted"},
+    {id:4, q:"The ______ of the experiment made us happy.", w:"SUCCEED", a:"success"},
+    {id:5, q:"Solar energy is a ______ source of power.", w:"RENEW", a:"renewable"},
+    {id:6, q:"The air in the city is ______ polluted.", w:"HEAVY", a:"heavily"},
+    {id:7, q:"He is a ______ person. He always helps others.", w:"HELP", a:"helpful"},
+    {id:8, q:"She sang the song ______.", w:"BEAUTIFUL", a:"beautifully"},
+    {id:9, q:"The ______ of the mountain is very impressive.", w:"HIGH", a:"height"},
+    {id:10, q:"There are many ______ celebrations throughout the year.", w:"FESTIVAL", a:"festive"},
+    {id:11, q:"Energy ______ is very important nowadays.", w:"CONSERVE", a:"conservation"},
+    {id:12, q:"The teacher gave us a lot of ______.", w:"ENCOURAGE", a:"encouragement"},
+    {id:13, q:"We should avoid ______ the water.", w:"POLLUTE", a:"polluting"},
+    {id:14, q:"The local people are very ______.", w:"FRIEND", a:"friendly"},
+    {id:15, q:"Plastic bags are ______ to the environment.", w:"HARM", a:"harmful"},
+    {id:16, q:"Her ______ made me surprised.", w:"APPEAR", a:"appearance"},
+    {id:17, q:"He was ______ in his attempt to win the race.", w:"SUCCEED", a:"successful"},
+    {id:18, q:"They have ______ their house recently.", w:"MODERN", a:"modernized"},
+    {id:19, q:"The movie was very ______.", w:"INTEREST", a:"interesting"},
+    {id:20, q:"She is an ______ student.", w:"EXCEL", a:"excellent"},
+    {id:21, q:"We need to ______ our natural resources.", w:"PROTECTION", a:"protect"},
+    {id:22, q:"The ______ between the two countries is good.", w:"RELATION", a:"relationship"},
+    {id:23, q:"She is ______ in learning English.", w:"INTEREST", a:"interested"},
+    {id:24, q:"The weather was ______ cold yesterday.", w:"EXTREME", a:"extremely"},
+    {id:25, q:"He is a famous ______.", w:"SCIENCE", a:"scientist"},
+    {id:26, q:"The ______ of the bridge took two years.", w:"CONSTRUCT", a:"construction"},
+    {id:27, q:"I am very ______ of my father.", w:"PRIDE", a:"proud"},
+    {id:28, q:"We should reduce ______.", w:"CONSUME", a:"consumption"},
+    {id:29, q:"He drove ______ and had an accident.", w:"CARE", a:"carelessly"},
+    {id:30, q:"The ______ of the town is growing.", w:"POPULATE", a:"population"},
+    {id:31, q:"The volcano ______ unexpectedly.", w:"ERUPT", a:"erupted"},
+    {id:32, q:"Music is a form of ______.", w:"ENTERTAIN", a:"entertainment"},
+    {id:33, q:"He is ______ about his future.", w:"HOPE", a:"hopeful"},
+    {id:34, q:"The food was ______ prepared.", w:"DELICIOUS", a:"deliciously"},
+    {id:35, q:"There is a ______ of water in this area.", w:"SHORT", a:"shortage"},
+    {id:36, q:"They are ______ working on the project.", w:"BUSY", a:"busily"},
+    {id:37, q:"Her ______ made him very sad.", w:"DIE", a:"death"},
+    {id:38, q:"She is a very ______ dancer.", w:"GRACE", a:"graceful"},
+    {id:39, q:"The ______ was a great success.", w:"PERFORM", a:"performance"},
+    {id:40, q:"We should ______ the usage of plastic.", w:"MINIMIZE", a:"minimize"},
+    {id:41, q:"The ______ is very fresh in the morning.", w:"ATMOSPHERE", a:"atmosphere"},
+    {id:42, q:"He gave a ______ explanation.", w:"SATISFY", a:"satisfactory"},
+    {id:43, q:"The ______ of the child is normal.", w:"DEVELOP", a:"development"},
+    {id:44, q:"You should be ______ when crossing the street.", w:"CARE", a:"careful"},
+    {id:45, q:"The ______ was very informative.", w:"ADVERTISE", a:"advertisement"},
+    {id:46, q:"He is ______ to his parents.", w:"OBEY", a:"obedient"},
+    {id:47, q:"The situation is ______.", w:"HOPE", a:"hopeless"},
+    {id:48, q:"The ______ was signed yesterday.", w:"AGREE", a:"agreement"},
+    {id:49, q:"I ______ agree with you.", w:"ENTIRE", a:"entirely"},
+    {id:50, q:"We need more ______ about the course.", w:"INFORM", a:"information"},
+    {id:51, q:"She has a large ______ of stamps.", w:"COLLECT", a:"collection"},
+    {id:52, q:"It is ______ to drive without a license.", w:"LEGAL", a:"illegal"},
+    {id:53, q:"The ______ of the forest is essential.", w:"PRESERVE", a:"preservation"},
+    {id:54, q:"He is a ______ person.", w:"RELY", a:"reliable"},
+    {id:55, q:"The ______ was very exciting.", w:"COMPETE", a:"competition"},
+    {id:56, q:"I am ______ sorry for the delay.", w:"EXTREME", a:"extremely"},
+    {id:57, q:"The children are very ______.", w:"CREATE", a:"creative"},
+    {id:58, q:"We must ______ the environment.", w:"ENRICH", a:"enrich"},
+    {id:59, q:"The ______ was very beautiful.", w:"SCENE", a:"scenery"},
+    {id:60, q:"He is very ______ in his work.", w:"ACTIVE", a:"active"}
 ];
 
-// 2. KHỞI TẠO TRỌNG SỐ (WEIGHTS)
-let weights = JSON.parse(localStorage.getItem('quiz_weights')) || {};
-allQuestions.forEach(q => {
-    if (weights[q.id] === undefined) weights[q.id] = 100; // Mặc định 100% (câu chưa thuộc)
-});
+let weights = JSON.parse(localStorage.getItem('wf_weights')) || {};
+wordFormBank.forEach(q => { if(weights[q.id] === undefined) weights[q.id] = 100; });
 
 let currentBatch = [];
-let userSelections = {};
 
-// 3. HÀM CHỌN 5 CÂU CÓ TRỌNG SỐ CAO NHẤT
 function initBatch() {
-    // Sắp xếp câu hỏi theo trọng số giảm dần
-    const sorted = allQuestions.sort((a, b) => weights[b.id] - weights[a.id]);
-    
-    // Lấy 5 câu đầu tiên (khó nhất/sai nhiều nhất)
+    const sorted = [...wordFormBank].sort((a, b) => weights[b.id] - weights[a.id]);
     currentBatch = sorted.slice(0, 5);
-    userSelections = {};
     
     const area = document.getElementById('quiz-area');
     area.innerHTML = '';
     
     currentBatch.forEach((q, idx) => {
-        const card = document.createElement('div');
-        card.className = 'question-card';
-        card.innerHTML = `
-            <div class="q-text">Câu ${q.id}: ${q.q} <small>(Độ khó: ${weights[q.id]}%)</small></div>
-            <div class="options" id="opt-group-${q.id}">
-                ${q.o.map(opt => `<button class="opt" onclick="select(${q.id}, '${opt}', this)">${opt}</button>`).join('')}
-            </div>
-            <div class="hint" id="hint-${q.id}">💡 Giải thích: ${q.h}</div>
+        const div = document.createElement('div');
+        div.className = 'question-box';
+        div.innerHTML = `
+            <div class="q-text">${idx+1}. ${q.q.replace('______', `<input type="text" id="input-${q.id}" placeholder="Điền đáp án...">`)} 
+            (<span class="word-bracket">${q.w || q.o}</span>)</div>
+            <div class="feedback" id="fb-${q.id}"></div>
         `;
-        area.appendChild(card);
+        area.appendChild(div);
     });
-    
     document.getElementById('current-score').innerText = "0/5";
     updateMasteryUI();
 }
 
-function select(qId, val, btn) {
-    userSelections[qId] = val;
-    const group = document.getElementById(`opt-group-${qId}`);
-    group.querySelectorAll('.opt').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-}
-
-// 4. HÀM CHẤM ĐIỂM VÀ CẬP NHẬT TRỌNG SỐ
 function gradeBatch() {
-    let batchScore = 0;
+    let score = 0;
     currentBatch.forEach(q => {
-        const userAns = userSelections[q.id];
-        const group = document.getElementById(`opt-group-${q.id}`);
-        const hint = document.getElementById(`hint-${q.id}`);
-        hint.style.display = 'block';
+        const input = document.getElementById(`input-${q.id}`);
+        const fb = document.getElementById(`fb-${q.id}`);
+        const userVal = input.value.trim().toLowerCase();
+        const correctVal = q.a.toLowerCase();
         
-        const buttons = group.querySelectorAll('.opt');
-        buttons.forEach(btn => {
-            btn.disabled = true;
-            if(btn.innerText === q.a) btn.classList.add('correct');
-            if(userAns === btn.innerText && userAns !== q.a) btn.classList.add('wrong');
-        });
+        fb.style.display = 'block';
+        input.disabled = true;
 
-        if(userAns === q.a) {
-            batchScore++;
-            // Giảm trọng số nếu đúng (giảm nhanh để câu khác hiện lên)
-            weights[q.id] = Math.max(0, weights[q.id] - 34); 
+        if(userVal === correctVal) {
+            score++;
+            input.classList.add('correct-input');
+            fb.innerHTML = `<span class="correct-txt">Chính xác!</span>`;
+            weights[q.id] = Math.max(0, weights[q.id] - 40);
         } else {
-            // Tăng trọng số nếu sai
+            input.classList.add('wrong-input');
+            fb.innerHTML = `<span class="wrong-txt">Sai rồi! Đáp án đúng: ${q.a}</span>`;
             weights[q.id] = Math.min(100, weights[q.id] + 20);
         }
     });
-
-    document.getElementById('current-score').innerText = `${batchScore}/5`;
-    localStorage.setItem('quiz_weights', JSON.stringify(weights));
+    
+    document.getElementById('current-score').innerText = `${score}/5`;
+    localStorage.setItem('wf_weights', JSON.stringify(weights));
     updateMasteryUI();
 }
 
 function updateMasteryUI() {
-    // Một câu được coi là "thuộc" nếu trọng số < 20%
     const mastered = Object.values(weights).filter(w => w < 20).length;
     document.getElementById('mastered-count').innerText = mastered;
 }
 
-// Chạy lần đầu
 initBatch();
 </script>
-
 </body>
 </html>
