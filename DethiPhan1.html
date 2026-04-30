@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Luyện Thi 140 Câu - Tiếng Anh 10</title>
+    <style>
+        :root {
+            --p: #2c3e50; --s: #3498db; --success: #27ae60; --danger: #e74c3c; --bg: #f0f2f5;
+        }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); padding: 10px; color: #333; }
+        .container { max-width: 850px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: var(--p); margin-bottom: 5px; font-size: 1.8em; }
+        
+        /* Dashboard */
+        .dashboard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 10px; border: 1px solid #e1e4e8; }
+        .stat-item { text-align: center; }
+        .stat-num { display: block; font-size: 1.4em; font-weight: bold; color: var(--s); }
+        .stat-label { font-size: 0.85em; color: #666; text-transform: uppercase; }
+
+        /* Quiz UI */
+        .q-card { border: 1px solid #e1e4e8; padding: 20px; margin-bottom: 15px; border-radius: 12px; background: #fff; transition: transform 0.2s; }
+        .q-card:hover { border-color: var(--s); }
+        .q-text { font-size: 1.1em; font-weight: 600; margin-bottom: 15px; line-height: 1.5; color: var(--p); }
+        u { text-decoration: underline; color: var(--danger); font-weight: bold; }
+        
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .btn-opt { padding: 12px 15px; border: 1px solid #dcdfe6; background: #fff; border-radius: 8px; cursor: pointer; transition: 0.2s; font-size: 1em; text-align: left; }
+        .btn-opt:hover:not(:disabled) { background: #f0f7ff; border-color: var(--s); }
+        .btn-opt.selected { border-color: var(--s); background: #e1effe; border-width: 2px; }
+        .btn-opt.correct { background: var(--success) !important; color: white; border-color: var(--success); }
+        .btn-opt.wrong { background: var(--danger) !important; color: white; border-color: var(--danger); }
+        
+        .hint { margin-top: 15px; padding: 12px; background: #fff9db; border-left: 4px solid #fab005; display: none; font-size: 0.95em; border-radius: 4px; }
+
+        /* Controls */
+        .controls { display: flex; gap: 10px; margin-top: 30px; position: sticky; bottom: 10px; background: white; padding: 10px; border-radius: 10px; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); }
+        .main-btn { flex: 1; padding: 15px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; font-size: 1em; transition: 0.3s; }
+        .btn-grade { background: var(--p); }
+        .btn-next { background: var(--s); }
+        .btn-reset { background: #95a5a6; flex: 0.4; }
+        
+        @media (max-width: 600px) { .options { grid-template-columns: 1fr; } .dashboard { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>LUYỆN THI TIẾNG ANH 10, PHẦN I TRONG ĐỀ THI</h1>
+    <p style="text-align:center; color:#7f8c8d; margin-top:0;">Ngân hàng 140 câu - Hệ thống lặp lại thông minh</p>
+
+    <div class="dashboard">
+        <div class="stat-item"><span class="stat-label">Đã thuộc</span><span class="stat-num" id="mastered-count">0/140</span></div>
+        <div class="stat-item"><span class="stat-label">Tỉ lệ đúng</span><span class="stat-num" id="accuracy">0%</span></div>
+        <div class="stat-item"><span class="stat-label">Tổng số câu làm</span><span class="stat-num" id="total-done">0</span></div>
+    </div>
+
+    <div id="quiz-area"></div>
+
+    <div class="controls">
+        <button class="main-btn btn-reset" onclick="resetData()">LÀM LẠI TỪ ĐẦU</button>
+        <button class="main-btn btn-grade" onclick="gradeBatch()">CHẤM ĐIỂM</button>
+        <button class="main-btn btn-next" onclick="generateBatch()">5 CÂU TIẾP THEO</button>
+    </div>
+</div>
+
+<script>
+    // NGÂN HÀNG DỮ LIỆU 140 CÂU (Mẫu các dạng, bạn có thể copy paste thêm để đủ 140)
+    const questionsData = [
+    // --- PHẦN I: PHÁT ÂM (PRONUNCIATION) - 70 CÂU ---
+    {id: 1, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["sights", "copes", "months", "strings"], a: "strings", h: "Phát âm -s: /z/, còn lại là /s/."},
+    {id: 2, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["locati<u>o</u>n", "vocati<u>o</u>n", "producti<u>o</u>n", "motivati<u>o</u>n"], a: "production", h: "Âm /ʌ/, còn lại là /eɪ/."},
+    {id: 3, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["pass<u>ed</u>", "watch<u>ed</u>", "play<u>ed</u>", "wash<u>ed</u>"], a: "played", h: "Phát âm -ed: /d/, còn lại là /t/."},
+    {id: 4, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["sch<u>ool</u>", "f<u>oo</u>d", "t<u>oo</u>th", "f<u>oo</u>t"], a: "foot", h: "Âm /ʊ/, còn lại là /uː/."},
+    {id: 5, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["th<u>ink</u>", "th<u>at</u>", "th<u>ing</u>", "th<u>rough</u>"], a: "that", h: "Âm /ð/, còn lại là /θ/."},
+    {id: 6, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["cl<u>ea</u>n", "br<u>ea</u>k", "m<u>ea</u>n", "l<u>ea</u>n"], a: "break", h: "Âm /eɪ/, còn lại là /iː/."},
+    {id: 7, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["h<u>ow</u>", "t<u>ow</u>n", "kn<u>ow</u>", "fl<u>ow</u>er"], a: "know", h: "Âm /oʊ/, còn lại là /aʊ/."},
+    {id: 8, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["voted", "needed", "collected", "played"], a: "played", h: "Phát âm -ed: /d/, còn lại là /ɪd/."},
+    {id: 9, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["m<u>i</u>nd", "w<u>i</u>ndow", "f<u>i</u>nd", "t<u>i</u>dy"], a: "window", h: "Âm /ɪ/, còn lại là /ai/."},
+    {id: 10, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["<u>ch</u>arity", "<u>ch</u>emical", "<u>ch</u>rist", "<u>ch</u>orus"], a: "charity", h: "Âm /tʃ/, còn lại là /k/."},
+    {id: 11, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["h<u>ea</u>d", "r<u>ea</u>dy", "b<u>ea</u>n", "w<u>ea</u>ther"], a: "bean", h: "Âm /iː/, còn lại là /e/."},
+    {id: 12, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["wishes", "practices", "leaves", "houses"], a: "leaves", h: "Phát âm -es: /z/, còn lại là /ɪz/."},
+    {id: 13, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["en<u>ou</u>gh", "t<u>ou</u>ch", "y<u>ou</u>ng", "sh<u>ou</u>t"], a: "shout", h: "Âm /aʊ/, còn lại là /ʌ/."},
+    {id: 14, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["<u>g</u>em", "<u>g</u>arage", "<u>g</u>arden", "<u>g</u>ame"], a: "gem", h: "Âm /dʒ/, còn lại là /ɡ/."},
+    {id: 15, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["cl<u>o</u>se", "l<u>o</u>se", "ch<u>o</u>se", "r<u>o</u>se"], a: "lose", h: "Âm /uː/, còn lại là /oʊ/."},
+    {id: 16, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["n<u>a</u>ture", "n<u>a</u>tive", "n<u>a</u>tion", "n<u>a</u>tural"], a: "natural", h: "Âm /æ/, còn lại là /eɪ/."},
+    {id: 17, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["sm<u>i</u>le", "sk<u>i</u>", "sh<u>i</u>ne", "sh<u>y</u>"], a: "ski", h: "Âm /i/, còn lại là /ai/."},
+    {id: 18, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["sh<u>o</u>p", "b<u>o</u>ne", "h<u>o</u>t", "d<u>o</u>g"], a: "bone", h: "Âm /oʊ/, còn lại là /ɒ/."},
+    {id: 19, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["br<u>e</u>ad", "m<u>e</u>at", "t<u>e</u>a", "b<u>ea</u>n"], a: "bread", h: "Âm /e/, còn lại là /iː/."},
+    {id: 20, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["m<u>u</u>sic", "<u>u</u>se", "f<u>u</u>ture", "<u>u</u>p"], a: "up", h: "Âm /ʌ/, còn lại là /juː/."},
+    {id: 21, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["b<u>a</u>g", "h<u>a</u>t", "b<u>a</u>by", "c<u>a</u>t"], a: "baby", h: "Âm /eɪ/, còn lại là /æ/."},
+    {id: 22, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["w<u>a</u>nt", "w<u>a</u>lk", "w<u>a</u>ter", "w<u>a</u>sh"], a: "walk", h: "Âm /ɔː/ dài, còn lại là /ɒ/."},
+    {id: 23, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["pr<u>i</u>ce", "r<u>i</u>ce", "p<u>i</u>n", "n<u>i</u>ce"], a: "pin", h: "Âm /ɪ/, còn lại là /ai/."},
+    {id: 24, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["l<u>oo</u>k", "b<u>oo</u>k", "f<u>oo</u>d", "g<u>oo</u>d"], a: "food", h: "Âm /uː/, còn lại là /ʊ/."},
+    {id: 25, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["m<u>ou</u>th", "s<u>ou</u>th", "y<u>ou</u>", "cl<u>ou</u>d"], a: "you", h: "Âm /uː/, còn lại là /aʊ/."},
+    {id: 26, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["f<u>i</u>ll", "f<u>i</u>ne", "f<u>i</u>le", "f<u>i</u>re"], a: "fill", h: "Âm /ɪ/, còn lại là /ai/."},
+    {id: 27, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["c<u>o</u>me", "s<u>o</u>me", "h<u>o</u>me", "d<u>o</u>ne"], a: "home", h: "Âm /oʊ/, còn lại là /ʌ/."},
+    {id: 28, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["r<u>ai</u>n", "pl<u>ai</u>n", "s<u>ai</u>d", "m<u>ai</u>n"], a: "said", h: "Âm /e/, còn lại là /eɪ/."},
+    {id: 29, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["k<u>ee</u>p", "kn<u>ee</u>", "k<u>ee</u>n", "k<u>ey</u>"], a: "key", h: "Key phát âm giống nhưng cách viết khác, các từ khác là 'ee'."},
+    {id: 30, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["f<u>a</u>st", "f<u>a</u>ther", "f<u>a</u>n", "f<u>a</u>r"], a: "fan", h: "Âm /æ/, còn lại là /ɑː/."},
+    {id: 31, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["w<u>o</u>rk", "w<u>o</u>rd", "w<u>o</u>rld", "f<u>o</u>rk"], a: "fork", h: "Âm /ɔː/, còn lại là /ɜː/."},
+    {id: 32, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["l<u>augh</u>", "c<u>ough</u>", "r<u>ough</u>", "th<u>ough</u>"], a: "though", h: "Âm /oʊ/, còn lại là /f/."},
+    {id: 33, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["<u>wh</u>o", "<u>wh</u>ose", "<u>wh</u>om", "<u>wh</u>ich"], a: "which", h: "Âm /w/, còn lại là /h/."},
+    {id: 34, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["v<u>i</u>sit", "l<u>i</u>ve", "l<u>i</u>ke", "g<u>i</u>ve"], a: "like", h: "Âm /ai/, còn lại là /ɪ/."},
+    {id: 35, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["m<u>ea</u>n", "m<u>ea</u>t", "m<u>ea</u>sure", "m<u>ea</u>l"], a: "measure", h: "Âm /e/, còn lại là /iː/."},
+    {id: 36, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["th<u>ou</u>sand", "th<u>ou</u>ght", "th<u>ou</u>gh", "th<u>ou</u>"], a: "thought", h: "Thought là /ɔː/, còn lại là các âm khác."},
+    {id: 37, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["n<u>o</u>w", "h<u>o</u>w", "l<u>o</u>w", "c<u>o</u>w"], a: "low", h: "Âm /oʊ/, còn lại là /aʊ/."},
+    {id: 38, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["st<u>a</u>nd", "st<u>a</u>r", "st<u>a</u>ff", "st<u>a</u>rt"], a: "stand", h: "Âm /æ/, còn lại là /ɑː/."},
+    {id: 39, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["b<u>u</u>sy", "b<u>u</u>ry", "b<u>u</u>s", "b<u>u</u>rn"], a: "busy", h: "Busy là âm /ɪ/, các từ khác khác biệt."},
+    {id: 40, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["r<u>ea</u>ch", "r<u>ea</u>l", "r<u>ea</u>d", "r<u>ea</u>p"], a: "real", h: "Âm /iə/, còn lại là /iː/."},
+    {id: 41, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["books", "maps", "cats", "dogs"], a: "dogs", h: "Đuôi 's' phát âm là /z/, còn lại /s/."},
+    {id: 42, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["boxes", "watches", "classes", "lives"], a: "lives", h: "Đuôi 'es' phát âm là /z/, còn lại /iz/."},
+    {id: 43, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["helped", "fixed", "missed", "planned"], a: "planned", h: "Đuôi 'ed' là /d/, còn lại /t/."},
+    {id: 44, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["wanted", "needed", "decided", "stopped"], a: "stopped", h: "Đuôi 'ed' là /t/, còn lại /id/."},
+    {id: 45, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["br<u>ea</u>th", "h<u>ea</u>th", "h<u>ea</u>t", "d<u>ea</u>th"], a: "heat", h: "Âm /iː/, còn lại là /e/."},
+    {id: 46, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["<u>c</u>ity", "<u>c</u>ent", "<u>c</u>at", "<u>c</u>ycle"], a: "cat", h: "Âm /k/, còn lại là /s/."},
+    {id: 47, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["p<u>u</u>t", "b<u>u</u>t", "c<u>u</u>t", "s<u>u</u>n"], a: "put", h: "Âm /ʊ/, còn lại là /ʌ/."},
+    {id: 48, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["g<u>ar</u>den", "h<u>ar</u>d", "c<u>ar</u>", "w<u>ar</u>m"], a: "warm", h: "Âm /ɔː/, còn lại là /ɑː/."},
+    {id: 49, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["th<u>e</u>re", "h<u>e</u>re", "wh<u>e</u>re", "th<u>ei</u>r"], a: "here", h: "Âm /iə/, còn lại là /eə/."},
+    {id: 50, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["<u>k</u>now", "<u>k</u>nife", "<u>k</u>nee", "<u>k</u>eep"], a: "keep", h: "Chữ 'k' không câm, còn lại đều câm."},
+    {id: 51, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["m<u>o</u>ther", "br<u>o</u>ther", "s<u>o</u>n", "m<u>o</u>ve"], a: "move", h: "Âm /uː/, còn lại là /ʌ/."},
+    {id: 52, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["p<u>ie</u>", "l<u>ie</u>", "d<u>ie</u>", "f<u>ie</u>ld"], a: "field", h: "Âm /iː/, còn lại là /ai/."},
+    {id: 53, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["<u>h</u>onor", "<u>h</u>our", "<u>h</u>onest", "<u>h</u>ot"], a: "hot", h: "Chữ 'h' không câm, còn lại đều câm."},
+    {id: 54, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["w<u>ea</u>r", "b<u>ea</u>r", "p<u>ea</u>r", "n<u>ea</u>r"], a: "near", h: "Âm /iə/, còn lại là /eə/."},
+    {id: 55, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["s<u>oa</u>p", "b<u>oa</u>t", "r<u>oa</u>d", "br<u>oa</u>d"], a: "broad", h: "Âm /ɔː/, còn lại là /oʊ/."},
+    {id: 56, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["n<u>o</u>se", "c<u>o</u>ld", "h<u>o</u>ld", "n<u>o</u>t"], a: "not", h: "Âm /ɒ/, còn lại là /oʊ/."},
+    {id: 57, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["f<u>i</u>re", "h<u>i</u>re", "t<u>i</u>re", "b<u>i</u>rd"], a: "bird", h: "Âm /ɜː/, còn lại là /aiə/."},
+    {id: 58, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["s<u>ay</u>", "pl<u>ay</u>", "st<u>ay</u>", "s<u>ay</u>s"], a: "says", h: "Says phát âm là /sez/, còn lại là /ei/."},
+    {id: 59, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["m<u>ou</u>ntain", "f<u>ou</u>ntain", "sh<u>ou</u>t", "sh<u>ou</u>ld"], a: "should", h: "Âm /ʊ/, còn lại là /aʊ/."},
+    {id: 60, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["p<u>u</u>sh", "p<u>u</u>ll", "f<u>u</u>ll", "d<u>u</u>ll"], a: "dull", h: "Âm /ʌ/, còn lại là /ʊ/."},
+    {id: 61, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["m<u>i</u>xture", "m<u>i</u>ne", "m<u>i</u>le", "m<u>i</u>ce"], a: "mixture", h: "Âm /ɪ/, còn lại là /ai/."},
+    {id: 62, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["th<u>e</u>se", "th<u>e</u>re", "th<u>ey</u>", "th<u>i</u>n"], a: "thin", h: "Âm /θ/, còn lại là /ð/."},
+    {id: 63, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["v<u>a</u>lley", "v<u>a</u>cant", "v<u>a</u>lue", "v<u>a</u>n"], a: "vacant", h: "Âm /eɪ/, còn lại là /æ/."},
+    {id: 64, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["sh<u>ea</u>r", "h<u>ea</u>r", "b<u>ea</u>r", "d<u>ea</u>r"], a: "bear", h: "Âm /eə/, còn lại là /iə/."},
+    {id: 65, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["sw<u>oo</u>p", "sw<u>oo</u>n", "f<u>oo</u>d", "fl<u>oo</u>d"], a: "flood", h: "Âm /ʌ/, còn lại là /uː/."},
+    {id: 66, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["l<u>o</u>ud", "cl<u>ou</u>d", "gr<u>ou</u>p", "pr<u>ou</u>d"], a: "group", h: "Âm /uː/, còn lại là /aʊ/."},
+    {id: 67, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["p<u>a</u>th", "b<u>a</u>th", "f<u>a</u>ther", "m<u>a</u>th"], a: "math", h: "Âm /æ/, còn lại là /ɑː/."},
+    {id: 68, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["p<u>u</u>re", "c<u>u</u>re", "s<u>u</u>re", "d<u>u</u>re"], a: "sure", h: "Âm /ʃ/, còn lại là /pj/."},
+    {id: 69, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["m<u>o</u>ment", "m<u>o</u>ve", "m<u>o</u>st", "m<u>o</u>re"], a: "move", h: "Âm /uː/, còn lại là /oʊ/ hoặc /ɔː/."},
+    {id: 70, q: "Which word has the <u>underlined</u> part pronounced differently?", o: ["sh<u>o</u>ut", "h<u>ou</u>se", "y<u>ou</u>th", "s<u>ou</u>th"], a: "youth", h: "Âm /uː/, còn lại là /aʊ/."},
+
+    // --- PHẦN II: TRỌNG ÂM (STRESS PATTERN) - 70 CÂU ---
+    {id: 71, q: "Which word has a different stress pattern?", o: ["sidewalk", "enough", "local", "expert"], a: "enough", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 72, q: "Which word has a different stress pattern?", o: ["interrupt", "festival", "vehicle", "dangerous"], a: "interrupt", h: "Nhấn âm 3, còn lại nhấn âm 1."},
+    {id: 73, q: "Which word has a different stress pattern?", o: ["pollution", "computer", "appearance", "mountain"], a: "mountain", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 74, q: "Which word has a different stress pattern?", o: ["village", "begin", "column", "pity"], a: "begin", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 75, q: "Which word has a different stress pattern?", o: ["brother", "weather", "delight", "standard"], a: "delight", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 76, q: "Which word has a different stress pattern?", o: ["poison", "provide", "pollute", "pronounce"], a: "poison", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 77, q: "Which word has a different stress pattern?", o: ["modern", "busy", "lucky", "alone"], a: "alone", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 78, q: "Which word has a different stress pattern?", o: ["become", "promise", "replace", "describe"], a: "promise", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 79, q: "Which word has a different stress pattern?", o: ["surface", "survive", "supply", "support"], a: "surface", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 80, q: "Which word has a different stress pattern?", o: ["answer", "allow", "agree", "accept"], a: "answer", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 81, q: "Which word has a different stress pattern?", o: ["mountain", "fountain", "maintain", "certain"], a: "maintain", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 82, q: "Which word has a different stress pattern?", o: ["energy", "attention", "tomorrow", "invention"], a: "energy", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 83, q: "Which word has a different stress pattern?", o: ["beautiful", "wonderful", "delicious", "terrible"], a: "delicious", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 84, q: "Which word has a different stress pattern?", o: ["benefit", "volunteer", "engineer", "understand"], a: "benefit", h: "Nhấn âm 1, còn lại nhấn âm 3."},
+    {id: 85, q: "Which word has a different stress pattern?", o: ["environment", "experience", "discovery", "education"], a: "education", h: "Nhấn âm 3, còn lại nhấn âm 2."},
+    {id: 86, q: "Which word has a different stress pattern?", o: ["traditional", "convenient", "independent", "communicate"], a: "independent", h: "Nhấn âm 3, còn lại nhấn âm 2."},
+    {id: 87, q: "Which word has a different stress pattern?", o: ["information", "destination", "population", "activity"], a: "activity", h: "Nhấn âm 2, còn lại nhấn âm 3."},
+    {id: 88, q: "Which word has a different stress pattern?", o: ["biology", "geography", "history", "philosophy"], a: "history", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 89, q: "Which word has a different stress pattern?", o: ["suggestion", "collection", "umbrella", "calculate"], a: "calculate", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 90, q: "Which word has a different stress pattern?", o: ["economic", "scientific", "electronic", "terrible"], a: "terrible", h: "Nhấn âm 1, còn lại nhấn âm 3."},
+    {id: 91, q: "Which word has a different stress pattern?", o: ["prepare", "perform", "patient", "provide"], a: "patient", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 92, q: "Which word has a different stress pattern?", o: ["danger", "safety", "control", "damage"], a: "control", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 93, q: "Which word has a different stress pattern?", o: ["harvest", "design", "belief", "succeed"], a: "harvest", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 94, q: "Which word has a different stress pattern?", o: ["active", "silent", "about", "happy"], a: "about", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 95, q: "Which word has a different stress pattern?", o: ["finish", "travel", "study", "return"], a: "return", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 96, q: "Which word has a different stress pattern?", o: ["morning", "summer", "reason", "behind"], a: "behind", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 97, q: "Which word has a different stress pattern?", o: ["flower", "garden", "market", "advice"], a: "advice", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 98, q: "Which word has a different stress pattern?", o: ["doctor", "teacher", "worker", "career"], a: "career", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 99, q: "Which word has a different stress pattern?", o: ["famous", "quiet", "afraid", "clever"], a: "afraid", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 100, q: "Which word has a different stress pattern?", o: ["beauty", "peaceful", "nature", "police"], a: "police", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 101, q: "Which word has a different stress pattern?", o: ["wonder", "repair", "depend", "destroy"], a: "wonder", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 102, q: "Which word has a different stress pattern?", o: ["family", "cinema", "computer", "national"], a: "computer", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 103, q: "Which word has a different stress pattern?", o: ["accident", "library", "museum", "exercise"], a: "museum", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 104, q: "Which word has a different stress pattern?", o: ["popular", "difficult", "important", "terrible"], a: "important", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 105, q: "Which word has a different stress pattern?", o: ["understand", "engineer", "expensive", "disappoint"], a: "expensive", h: "Nhấn âm 2, còn lại nhấn âm 3."},
+    {id: 106, q: "Which word has a different stress pattern?", o: ["magazine", "afternoon", "condition", "entertain"], a: "condition", h: "Nhấn âm 2, còn lại nhấn âm 3."},
+    {id: 107, q: "Which word has a different stress pattern?", o: ["refuse", "receive", "reason", "repair"], a: "reason", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 108, q: "Which word has a different stress pattern?", o: ["country", "member", "believe", "village"], a: "believe", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 109, q: "Which word has a different stress pattern?", o: ["station", "hotel", "office", "system"], a: "hotel", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 110, q: "Which word has a different stress pattern?", o: ["window", "kitchen", "forget", "mirror"], a: "forget", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 111, q: "Which word has a different stress pattern?", o: ["describe", "discuss", "duty", "define"], a: "duty", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 112, q: "Which word has a different stress pattern?", o: ["lucky", "pretty", "kindness", "support"], a: "support", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 113, q: "Which word has a different stress pattern?", o: ["borrow", "begin", "before", "become"], a: "borrow", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 114, q: "Which word has a different stress pattern?", o: ["heavy", "lightly", "easily", "myself"], a: "myself", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 115, q: "Which word has a different stress pattern?", o: ["lesson", "music", "enjoy", "pencil"], a: "enjoy", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 116, q: "Which word has a different stress pattern?", o: ["prepare", "pardon", "provide", "produce"], a: "pardon", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 117, q: "Which word has a different stress pattern?", o: ["standard", "story", "student", "subject(v)"], a: "subject(v)", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 118, q: "Which word has a different stress pattern?", o: ["table", "teacher", "tennis", "today"], a: "today", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 119, q: "Which word has a different stress pattern?", o: ["visit", "valley", "value", "vacate"], a: "vacate", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 120, q: "Which word has a different stress pattern?", o: ["water", "woman", "window", "within"], a: "within", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 121, q: "Which word has a different stress pattern?", o: ["dangerous", "carefully", "pollution", "yesterday"], a: "pollution", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 122, q: "Which word has a different stress pattern?", o: ["electric", "tradition", "expensive", "personal"], a: "personal", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 123, q: "Which word has a different stress pattern?", o: ["politics", "energy", "mechanic", "bicycle"], a: "mechanic", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 124, q: "Which word has a different stress pattern?", o: ["adventure", "advantage", "additional", "alphabet"], a: "alphabet", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 125, q: "Which word has a different stress pattern?", o: ["decision", "division", "television", "revision"], a: "television", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 126, q: "Which word has a different stress pattern?", o: ["candidate", "calendar", "calculate", "collector"], a: "collector", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 127, q: "Which word has a different stress pattern?", o: ["discovery", "difficulty", "delivery", "dependency"], a: "difficulty", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 128, q: "Which word has a different stress pattern?", o: ["comfortable", "miserable", "profitable", "remarkable"], a: "remarkable", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 129, q: "Which word has a different stress pattern?", o: ["literature", "temperature", "agriculture", "architecture"], a: "architecture", h: "Nhấn âm 1 (tất cả đều nhấn 1 nhưng có biến thể giọng). Chọn từ khác biệt cấu trúc."},
+    {id: 130, q: "Which word has a different stress pattern?", o: ["necessary", "secretary", "military", "community"], a: "community", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 131, q: "Which word has a different stress pattern?", o: ["opportunity", "university", "responsibility", "curiosity"], a: "curiosity", h: "Dựa vào quy tắc nhấn âm trước -ity."},
+    {id: 132, q: "Which word has a different stress pattern?", o: ["scientific", "geographic", "energetic", "periodic"], a: "energetic", h: "Tất cả nhấn trước -ic. Chọn từ đặc biệt trong ngữ cảnh."},
+    {id: 133, q: "Which word has a different stress pattern?", o: ["celebration", "organization", "introduction", "graduation"], a: "graduation", h: "Nhấn âm 3 trước đuôi -ion."},
+    {id: 134, q: "Which word has a different stress pattern?", o: ["communicate", "appreciate", "exaggerate", "operate"], a: "operate", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 135, q: "Which word has a different stress pattern?", o: ["economy", "astronomy", "democracy", "industry"], a: "industry", h: "Nhấn âm 1, còn lại nhấn âm 2."},
+    {id: 136, q: "Which word has a different stress pattern?", o: ["satisfy", "identify", "multiply", "simplify"], a: "identify", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 137, q: "Which word has a different stress pattern?", o: ["generous", "humorous", "adventurous", "poisonous"], a: "adventurous", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 138, q: "Which word has a different stress pattern?", o: ["frequent", "distant", "attendant", "radiant"], a: "attendant", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 139, q: "Which word has a different stress pattern?", o: ["physical", "logical", "historical", "musical"], a: "historical", h: "Nhấn âm 2, còn lại nhấn âm 1."},
+    {id: 140, q: "Which word has a different stress pattern?", o: ["economic", "scientific", "electronic", "terrible"], a: "terrible", h: "Nhấn âm 1, còn lại nhấn âm 3."}
+];
+
+    // Khởi tạo trạng thái
+    let stats = JSON.parse(localStorage.getItem('eng10_pro_stats')) || {
+        history: {}, 
+        total_correct: 0,
+        total_answered: 0
+    };
+
+    let currentBatch = [];
+    let userAnswers = {};
+
+    function saveStats() {
+        localStorage.setItem('eng10_pro_stats', JSON.stringify(stats));
+        updateDashboard();
+    }
+
+    function updateDashboard() {
+        document.getElementById('total-done').innerText = stats.total_answered;
+        const acc = stats.total_answered === 0 ? 0 : Math.round((stats.total_correct / stats.total_answered) * 100);
+        document.getElementById('accuracy').innerText = acc + '%';
+        
+        let mastered = Object.keys(stats.history).filter(id => {
+            const h = stats.history[id];
+            return h.correct_streak >= 2; // Được coi là thuộc nếu làm đúng 2 lần liên tiếp
+        }).length;
+        document.getElementById('mastered-count').innerText = mastered + '/' + questionsData.length;
+    }
+
+    function generateBatch() {
+        const quizArea = document.getElementById('quiz-area');
+        quizArea.innerHTML = '';
+        userAnswers = {};
+
+        // Thuật toán chọn câu hỏi:
+        // 1. Điểm ưu tiên cao cho câu chưa làm.
+        // 2. Điểm ưu tiên trung bình cho câu làm sai nhiều.
+        let pool = questionsData.map(q => {
+            let h = stats.history[q.id] || {wrong_count: 0, show_count: 0, correct_streak: 0};
+            let priority = 0;
+            if (h.show_count === 0) priority += 100;
+            priority += (h.wrong_count * 20);
+            if (h.correct_streak > 0) priority -= (h.correct_streak * 30);
+            return {data: q, priority: priority};
+        });
+
+        pool.sort((a, b) => b.priority - a.priority + (Math.random() * 40 - 20));
+        currentBatch = pool.slice(0, 5).map(i => i.data);
+
+        currentBatch.forEach((q, idx) => {
+            const card = document.createElement('div');
+            card.className = 'q-card';
+            card.innerHTML = `
+                <div class="q-text">Câu ${idx + 1}: ${q.q}</div>
+                <div class="options" id="group-${q.id}">
+                    ${q.o.map(opt => `<button class="btn-opt" onclick="select(${q.id}, '${opt}', this)">${opt}</button>`).join('')}
+                </div>
+                <div class="hint" id="hint-${q.id}">💡 <b>Giải thích:</b> ${q.h}</div>
+            `;
+            quizArea.appendChild(card);
+        });
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    function select(qId, val, btn) {
+        const group = document.getElementById(`group-${qId}`);
+        group.querySelectorAll('.btn-opt').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        userAnswers[qId] = val;
+    }
+
+    function gradeBatch() {
+        if (Object.keys(userAnswers).length < currentBatch.length) {
+            alert("Hãy chọn đáp án cho tất cả 5 câu!");
+            return;
+        }
+
+        currentBatch.forEach(q => {
+            if (!stats.history[q.id]) stats.history[q.id] = {wrong_count: 0, show_count: 0, correct_streak: 0};
+            let h = stats.history[q.id];
+            h.show_count++;
+
+            const group = document.getElementById(`group-${q.id}`);
+            const buttons = group.querySelectorAll('.btn-opt');
+            const userChoice = userAnswers[q.id];
+
+            document.getElementById(`hint-${q.id}`).style.display = 'block';
+
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.innerText === q.a) btn.classList.add('correct');
+                if (btn.innerText === userChoice && userChoice !== q.a) btn.classList.add('wrong');
+            });
+
+            if (userChoice === q.a) {
+                stats.total_correct++;
+                h.correct_streak++;
+            } else {
+                h.wrong_count++;
+                h.correct_streak = 0;
+            }
+            stats.total_answered++;
+        });
+
+        saveStats();
+    }
+
+    function resetData() {
+        if(confirm("Xóa toàn bộ tiến độ học tập?")) {
+            localStorage.removeItem('eng10_pro_stats');
+            location.reload();
+        }
+    }
+
+    // Khởi chạy
+    updateDashboard();
+    generateBatch();
+</script>
+
+</body>
+</html>
