@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc Nghiệm Động Từ Bất Quy Tắc 100+</title>
+    <style>
+        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; line-height: 1.6; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #1a73e8; }
+        .stats { display: flex; justify-content: space-between; background: #e8f0fe; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; }
+        .question { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+        .q-text { font-size: 1.1em; margin-bottom: 10px; font-weight: bold; }
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-opt { padding: 10px; border: 1px solid #ddd; border-radius: 6px; background: #fff; cursor: pointer; text-align: left; }
+        .btn-opt:hover { background: #f8f9fa; border-color: #1a73e8; }
+        .btn-opt.selected { background: #d2e3fc; border-color: #1a73e8; }
+        .btn-opt.correct { background: #ceead6; border-color: #1e8e3e; }
+        .btn-opt.wrong { background: #fad2cf; border-color: #d93025; }
+        .controls { display: flex; gap: 10px; margin-top: 20px; }
+        button.main { flex: 1; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1em; }
+        .btn-grade { background: #1a73e8; color: white; }
+        .btn-next { background: #5f6368; color: white; }
+        .type-tag { font-size: 0.8em; color: #70757a; font-weight: normal; margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Irregular Verbs Master</h1>
+        <div class="stats">
+            <span>Tiến độ: <span id="mastered">0</span>/100+</span>
+            <span>Đúng: <span id="score-pct">0</span>%</span>
+        </div>
+        <div id="quiz-box"></div>
+        <div class="controls">
+            <button class="main btn-grade" onclick="grade()">Chấm Điểm</button>
+            <button class="main btn-next" onclick="loadNewBatch()">Đổi 5 Câu Khác</button>
+        </div>
+    </div>
+
+    <script>
+        const allQuestions = [{"id": 1, "q": "I (lose) ______ my keys. I can't find them anywhere.", "o": ["lost", "have lost", "lose", "had lost"], "a": "have lost", "type": "Present Perfect"}, {"id": 2, "q": "She (buy) ______ a new house in 2020.", "o": ["bought", "has bought", "buyed", "buys"], "a": "bought", "type": "Past Simple"}, {"id": 3, "q": "By the time we arrived, the film (begin) ______.", "o": ["began", "has begun", "had begun", "begins"], "a": "had begun", "type": "Past Perfect"}, {"id": 4, "q": "Look! The window (break) ______ by the wind.", "o": ["broke", "is broken", "has been broken", "breaks"], "a": "has been broken", "type": "Passive Voice"}, {"id": 5, "q": "He said that he (see) ______ that movie before.", "o": ["saw", "has seen", "had seen", "sees"], "a": "had seen", "type": "Reported Speech"}, {"id": 6, "q": "The girl (stand) ______ over there is my sister.", "o": ["standing", "stood", "stands", "to stand"], "a": "standing", "type": "Relative Clause Reduction"}, {"id": 7, "q": "The car (repair) ______ by that mechanic is mine.", "o": ["repairing", "repaired", "repairs", "to repair"], "a": "repaired", "type": "Relative Clause Reduction"}, {"id": 8, "q": "The first person (leave) ______ the room was him.", "o": ["leaving", "left", "to leave", "leaves"], "a": "to leave", "type": "Relative Clause Reduction"}, {"id": 9, "q": "She (go) ______ to the market yesterday.", "o": ["go", "goes", "went", "gone"], "a": "went", "type": "Past Simple"}, {"id": 10, "q": "Have you ever (eat) ______ sushi?", "o": ["eat", "ate", "eaten", "eats"], "a": "eaten", "type": "Present Perfect"}, {"id": 11, "q": "The letter was (write) ______ by her.", "o": ["write", "wrote", "written", "writing"], "a": "written", "type": "Passive"}, {"id": 12, "q": "They (speak) ______ to each other for two hours.", "o": ["spoke", "have spoken", "spoken", "speak"], "a": "have spoken", "type": "Present Perfect"}, {"id": 13, "q": "He (give) ______ me a gift last night.", "o": ["give", "gives", "gave", "given"], "a": "gave", "type": "Past Simple"}, {"id": 14, "q": "The birds (fly) ______ away a few minutes ago.", "o": ["fly", "flied", "flew", "flown"], "a": "flew", "type": "Past Simple"}, {"id": 15, "q": "I have (know) ______ him for ten years.", "o": ["know", "knew", "known", "knowing"], "a": "known", "type": "Present Perfect"}, {"id": 16, "q": "The building was (build) ______ in 1990.", "o": ["build", "builds", "built", "building"], "a": "built", "type": "Passive"}, {"id": 17, "q": "He (take) ______ many photos during his trip.", "o": ["take", "takes", "took", "taken"], "a": "took", "type": "Past Simple"}, {"id": 18, "q": "Has the thief been (catch) ______ yet?", "o": ["catch", "catched", "caught", "catching"], "a": "caught", "type": "Passive"}, {"id": 19, "q": "We (see) ______ a great movie last weekend.", "o": ["see", "saw", "seen", "seeing"], "a": "saw", "type": "Past Simple"}, {"id": 20, "q": "The sun (rise) ______ at 6 AM this morning.", "o": ["rise", "rose", "risen", "rising"], "a": "rose", "type": "Past Simple"}, {"id": 21, "q": "They have already ( become ) ______ the task.", "o": ["become", "became", "become", "becomeing"], "a": "become", "type": "Present Perfect"}, {"id": 22, "q": "They have already ( begin ) ______ the task.", "o": ["begin", "began", "begun", "begining"], "a": "begun", "type": "Present Perfect"}, {"id": 23, "q": "They have already ( break ) ______ the task.", "o": ["break", "broke", "broken", "breaking"], "a": "broken", "type": "Present Perfect"}, {"id": 24, "q": "They have already ( bring ) ______ the task.", "o": ["bring", "brought", "brought", "bringing"], "a": "brought", "type": "Present Perfect"}, {"id": 25, "q": "They have already ( burn ) ______ the task.", "o": ["burn", "burnt", "burnt", "burning"], "a": "burnt", "type": "Present Perfect"}, {"id": 26, "q": "They have already ( buy ) ______ the task.", "o": ["buy", "bought", "bought", "buying"], "a": "bought", "type": "Present Perfect"}, {"id": 27, "q": "They have already ( choose ) ______ the task.", "o": ["choose", "chose", "chosen", "chooseing"], "a": "chosen", "type": "Present Perfect"}, {"id": 28, "q": "They have already ( come ) ______ the task.", "o": ["come", "came", "come", "comeing"], "a": "come", "type": "Present Perfect"}, {"id": 29, "q": "They have already ( do ) ______ the task.", "o": ["do", "did", "done", "doing"], "a": "done", "type": "Present Perfect"}, {"id": 30, "q": "They have already ( drink ) ______ the task.", "o": ["drink", "drank", "drunk", "drinking"], "a": "drunk", "type": "Present Perfect"}, {"id": 31, "q": "They have already ( drive ) ______ the task.", "o": ["drive", "drove", "driven", "driveing"], "a": "driven", "type": "Present Perfect"}, {"id": 32, "q": "They have already ( fall ) ______ the task.", "o": ["fall", "fell", "fallen", "falling"], "a": "fallen", "type": "Present Perfect"}, {"id": 33, "q": "They have already ( feel ) ______ the task.", "o": ["feel", "felt", "felt", "feeling"], "a": "felt", "type": "Present Perfect"}, {"id": 34, "q": "They have already ( fight ) ______ the task.", "o": ["fight", "fought", "fought", "fighting"], "a": "fought", "type": "Present Perfect"}, {"id": 35, "q": "They have already ( find ) ______ the task.", "o": ["find", "found", "found", "finding"], "a": "found", "type": "Present Perfect"}, {"id": 36, "q": "They have already ( forget ) ______ the task.", "o": ["forget", "forgot", "forgotten", "forgeting"], "a": "forgotten", "type": "Present Perfect"}, {"id": 37, "q": "They have already ( get ) ______ the task.", "o": ["get", "got", "gotten", "geting"], "a": "gotten", "type": "Present Perfect"}, {"id": 38, "q": "They have already ( give ) ______ the task.", "o": ["give", "gave", "given", "giveing"], "a": "given", "type": "Present Perfect"}, {"id": 39, "q": "They have already ( grow ) ______ the task.", "o": ["grow", "grew", "grown", "growing"], "a": "grown", "type": "Present Perfect"}, {"id": 40, "q": "They have already ( hang ) ______ the task.", "o": ["hang", "hung", "hung", "hanging"], "a": "hung", "type": "Present Perfect"}, {"id": 41, "q": "They have already ( hear ) ______ the task.", "o": ["hear", "heard", "heard", "hearing"], "a": "heard", "type": "Present Perfect"}, {"id": 42, "q": "They have already ( hide ) ______ the task.", "o": ["hide", "hid", "hidden", "hideing"], "a": "hidden", "type": "Present Perfect"}, {"id": 43, "q": "They have already ( hold ) ______ the task.", "o": ["hold", "held", "held", "holding"], "a": "held", "type": "Present Perfect"}, {"id": 44, "q": "They have already ( keep ) ______ the task.", "o": ["keep", "kept", "kept", "keeping"], "a": "kept", "type": "Present Perfect"}, {"id": 45, "q": "They have already ( lead ) ______ the task.", "o": ["lead", "led", "led", "leading"], "a": "led", "type": "Present Perfect"}, {"id": 46, "q": "They have already ( leave ) ______ the task.", "o": ["leave", "left", "left", "leaveing"], "a": "left", "type": "Present Perfect"}, {"id": 47, "q": "They have already ( lend ) ______ the task.", "o": ["lend", "lent", "lent", "lending"], "a": "lent", "type": "Present Perfect"}, {"id": 48, "q": "They have already ( make ) ______ the task.", "o": ["make", "made", "made", "makeing"], "a": "made", "type": "Present Perfect"}, {"id": 49, "q": "They have already ( mean ) ______ the task.", "o": ["mean", "meant", "meant", "meaning"], "a": "meant", "type": "Present Perfect"}, {"id": 50, "q": "They have already ( meet ) ______ the task.", "o": ["meet", "met", "met", "meeting"], "a": "met", "type": "Present Perfect"}, {"id": 51, "q": "They have already ( pay ) ______ the task.", "o": ["pay", "paid", "paid", "paying"], "a": "paid", "type": "Present Perfect"}, {"id": 52, "q": "They have already ( put ) ______ the task.", "o": ["put", "put", "put", "puting"], "a": "put", "type": "Present Perfect"}, {"id": 53, "q": "They have already ( read ) ______ the task.", "o": ["read", "read", "read", "reading"], "a": "read", "type": "Present Perfect"}, {"id": 54, "q": "They have already ( ride ) ______ the task.", "o": ["ride", "rode", "ridden", "rideing"], "a": "ridden", "type": "Present Perfect"}, {"id": 55, "q": "They have already ( ring ) ______ the task.", "o": ["ring", "rang", "rung", "ringing"], "a": "rung", "type": "Present Perfect"}, {"id": 56, "q": "They have already ( run ) ______ the task.", "o": ["run", "ran", "run", "runing"], "a": "run", "type": "Present Perfect"}, {"id": 57, "q": "They have already ( say ) ______ the task.", "o": ["say", "said", "said", "saying"], "a": "said", "type": "Present Perfect"}, {"id": 58, "q": "They have already ( sell ) ______ the task.", "o": ["sell", "sold", "sold", "selling"], "a": "sold", "type": "Present Perfect"}, {"id": 59, "q": "They have already ( send ) ______ the task.", "o": ["send", "sent", "sent", "sending"], "a": "sent", "type": "Present Perfect"}, {"id": 60, "q": "They have already ( shake ) ______ the task.", "o": ["shake", "shook", "shaken", "shakeing"], "a": "shaken", "type": "Present Perfect"}, {"id": 61, "q": "They have already ( shoot ) ______ the task.", "o": ["shoot", "shot", "shot", "shooting"], "a": "shot", "type": "Present Perfect"}, {"id": 62, "q": "They have already ( show ) ______ the task.", "o": ["show", "showed", "shown", "showing"], "a": "shown", "type": "Present Perfect"}, {"id": 63, "q": "They have already ( shut ) ______ the task.", "o": ["shut", "shut", "shut", "shuting"], "a": "shut", "type": "Present Perfect"}, {"id": 64, "q": "They have already ( sing ) ______ the task.", "o": ["sing", "sang", "sung", "singing"], "a": "sung", "type": "Present Perfect"}, {"id": 65, "q": "They have already ( sit ) ______ the task.", "o": ["sit", "sat", "sat", "siting"], "a": "sat", "type": "Present Perfect"}, {"id": 66, "q": "They have already ( sleep ) ______ the task.", "o": ["sleep", "slept", "slept", "sleeping"], "a": "slept", "type": "Present Perfect"}, {"id": 67, "q": "They have already ( slide ) ______ the task.", "o": ["slide", "slid", "slid", "slideing"], "a": "slid", "type": "Present Perfect"}, {"id": 68, "q": "They have already ( spend ) ______ the task.", "o": ["spend", "spent", "spent", "spending"], "a": "spent", "type": "Present Perfect"}, {"id": 69, "q": "They have already ( stand ) ______ the task.", "o": ["stand", "stood", "stood", "standing"], "a": "stood", "type": "Present Perfect"}, {"id": 70, "q": "They have already ( steal ) ______ the task.", "o": ["steal", "stole", "stolen", "stealing"], "a": "stolen", "type": "Present Perfect"}, {"id": 71, "q": "They have already ( stick ) ______ the task.", "o": ["stick", "stuck", "stuck", "sticking"], "a": "stuck", "type": "Present Perfect"}, {"id": 72, "q": "They have already ( swim ) ______ the task.", "o": ["swim", "swam", "swum", "swiming"], "a": "swum", "type": "Present Perfect"}, {"id": 73, "q": "They have already ( teach ) ______ the task.", "o": ["teach", "taught", "taught", "teaching"], "a": "taught", "type": "Present Perfect"}, {"id": 74, "q": "They have already ( tell ) ______ the task.", "o": ["tell", "told", "told", "telling"], "a": "told", "type": "Present Perfect"}, {"id": 75, "q": "They have already ( think ) ______ the task.", "o": ["think", "thought", "thought", "thinking"], "a": "thought", "type": "Present Perfect"}, {"id": 76, "q": "They have already ( throw ) ______ the task.", "o": ["throw", "threw", "thrown", "throwing"], "a": "thrown", "type": "Present Perfect"}, {"id": 77, "q": "They have already ( understand ) ______ the task.", "o": ["understand", "understood", "understood", "understanding"], "a": "understood", "type": "Present Perfect"}, {"id": 78, "q": "They have already ( wake ) ______ the task.", "o": ["wake", "woke", "woken", "wakeing"], "a": "woken", "type": "Present Perfect"}, {"id": 79, "q": "They have already ( wear ) ______ the task.", "o": ["wear", "wore", "worn", "wearing"], "a": "worn", "type": "Present Perfect"}, {"id": 80, "q": "They have already ( win ) ______ the task.", "o": ["win", "won", "won", "wining"], "a": "won", "type": "Present Perfect"}, {"id": 81, "q": "They have already ( write ) ______ the task.", "o": ["write", "wrote", "written", "writeing"], "a": "written", "type": "Present Perfect"}, {"id": 82, "q": "The decision was ( become ) ______ by the manager.", "o": ["become", "became", "become", "is become"], "a": "become", "type": "Passive Voice"}, {"id": 83, "q": "The decision was ( begin ) ______ by the manager.", "o": ["begin", "began", "begun", "is begin"], "a": "begun", "type": "Passive Voice"}, {"id": 84, "q": "The decision was ( break ) ______ by the manager.", "o": ["break", "broke", "broken", "is break"], "a": "broken", "type": "Passive Voice"}, {"id": 85, "q": "The decision was ( bring ) ______ by the manager.", "o": ["bring", "brought", "brought", "is bring"], "a": "brought", "type": "Passive Voice"}, {"id": 86, "q": "The decision was ( burn ) ______ by the manager.", "o": ["burn", "burnt", "burnt", "is burn"], "a": "burnt", "type": "Passive Voice"}, {"id": 87, "q": "The decision was ( buy ) ______ by the manager.", "o": ["buy", "bought", "bought", "is buy"], "a": "bought", "type": "Passive Voice"}, {"id": 88, "q": "The decision was ( choose ) ______ by the manager.", "o": ["choose", "chose", "chosen", "is choose"], "a": "chosen", "type": "Passive Voice"}, {"id": 89, "q": "The decision was ( come ) ______ by the manager.", "o": ["come", "came", "come", "is come"], "a": "come", "type": "Passive Voice"}, {"id": 90, "q": "The decision was ( do ) ______ by the manager.", "o": ["do", "did", "done", "is do"], "a": "done", "type": "Passive Voice"}, {"id": 91, "q": "The decision was ( drink ) ______ by the manager.", "o": ["drink", "drank", "drunk", "is drink"], "a": "drunk", "type": "Passive Voice"}, {"id": 92, "q": "The decision was ( drive ) ______ by the manager.", "o": ["drive", "drove", "driven", "is drive"], "a": "driven", "type": "Passive Voice"}, {"id": 93, "q": "The decision was ( fall ) ______ by the manager.", "o": ["fall", "fell", "fallen", "is fall"], "a": "fallen", "type": "Passive Voice"}, {"id": 94, "q": "The decision was ( feel ) ______ by the manager.", "o": ["feel", "felt", "felt", "is feel"], "a": "felt", "type": "Passive Voice"}, {"id": 95, "q": "The decision was ( fight ) ______ by the manager.", "o": ["fight", "fought", "fought", "is fight"], "a": "fought", "type": "Passive Voice"}, {"id": 96, "q": "The decision was ( find ) ______ by the manager.", "o": ["find", "found", "found", "is find"], "a": "found", "type": "Passive Voice"}, {"id": 97, "q": "The decision was ( forget ) ______ by the manager.", "o": ["forget", "forgot", "forgotten", "is forget"], "a": "forgotten", "type": "Passive Voice"}, {"id": 98, "q": "The decision was ( get ) ______ by the manager.", "o": ["get", "got", "gotten", "is get"], "a": "gotten", "type": "Passive Voice"}, {"id": 99, "q": "The decision was ( give ) ______ by the manager.", "o": ["give", "gave", "given", "is give"], "a": "given", "type": "Passive Voice"}, {"id": 100, "q": "The decision was ( grow ) ______ by the manager.", "o": ["grow", "grew", "grown", "is grow"], "a": "grown", "type": "Passive Voice"}, {"id": 101, "q": "The decision was ( hang ) ______ by the manager.", "o": ["hang", "hung", "hung", "is hang"], "a": "hung", "type": "Passive Voice"}];
+        let weights = JSON.parse(localStorage.getItem('verb_weights')) || {};
+        let totalCorrect = parseInt(localStorage.getItem('total_correct')) || 0;
+        let totalAttempts = parseInt(localStorage.getItem('total_attempts')) || 0;
+        
+        allQuestions.forEach(q => { if(!weights[q.id]) weights[q.id] = 5; });
+
+        let currentBatch = [];
+        let selections = {};
+
+        function save() {
+            localStorage.setItem('verb_weights', JSON.stringify(weights));
+            localStorage.setItem('total_correct', totalCorrect);
+            localStorage.setItem('total_attempts', totalAttempts);
+            updateStats();
+        }
+
+        function updateStats() {
+            const pct = totalAttempts === 0 ? 0 : Math.round((totalCorrect / totalAttempts) * 100);
+            document.getElementById('score-pct').innerText = pct;
+            const mastered = Object.values(weights).filter(w => w <= 1).length;
+            document.getElementById('mastered').innerText = mastered;
+        }
+
+        function loadNewBatch() {
+            const box = document.getElementById('quiz-box');
+            box.innerHTML = '';
+            selections = {};
+            
+            // Lấy 5 câu có trọng số cao nhất (ưu tiên câu chưa làm hoặc làm sai)
+            let sorted = allQuestions.slice().sort((a, b) => weights[b.id] - weights[a.id]);
+            currentBatch = sorted.slice(0, 15).sort(() => Math.random() - 0.5).slice(0, 5);
+
+            currentBatch.forEach((q, i) => {
+                const div = document.createElement('div');
+                div.className = 'question';
+                div.innerHTML = `
+                    <div class="q-text">${i+1}. ${q.q} <span class="type-tag">[${q.type}]</span></div>
+                    <div class="options" id="opt-group-${q.id}">
+                        ${q.o.map(opt => `<button class="btn-opt" onclick="select(${q.id}, '${opt}', this)">${opt}</button>`).join('')}
+                    </div>
+                `;
+                box.appendChild(div);
+            });
+        }
+
+        function select(id, val, el) {
+            selections[id] = val;
+            const parent = document.getElementById('opt-group-'+id);
+            parent.querySelectorAll('.btn-opt').forEach(b => b.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function grade() {
+            let answered = Object.keys(selections).length;
+            if(answered < 5) { alert('Vui lòng làm hết 5 câu!'); return; }
+
+            currentBatch.forEach(q => {
+                const userVal = selections[q.id];
+                const parent = document.getElementById('opt-group-'+q.id);
+                const buttons = parent.querySelectorAll('.btn-opt');
+                
+                totalAttempts++;
+                if(userVal === q.a) {
+                    totalCorrect++;
+                    weights[q.id] = Math.max(1, weights[q.id] - 1);
+                    buttons.forEach(b => { if(b.innerText === q.a) b.classList.add('correct'); });
+                } else {
+                    weights[q.id] += 2;
+                    buttons.forEach(b => {
+                        if(b.innerText === q.a) b.classList.add('correct');
+                        if(b.innerText === userVal) b.classList.add('wrong');
+                    });
+                }
+            });
+            save();
+        }
+
+        loadNewBatch();
+        updateStats();
+    </script>
+</body>
+</html>
