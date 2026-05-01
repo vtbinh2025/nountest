@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luyện viết lại câu 68 Câu - Tiếng Anh 10</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #e67e22;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --bg: #f4f7f6;
+        }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); padding: 20px; }
+        .container { max-width: 850px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: var(--primary); border-bottom: 3px solid var(--accent); padding-bottom: 10px; text-transform: uppercase; font-size: 1.5em; }
+        .stats { display: flex; justify-content: space-around; background: #fff3e0; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-weight: bold; border: 1px solid #ffe0b2; }
+        
+        .question-box { border: 1px solid #eee; padding: 20px; border-radius: 10px; margin-bottom: 20px; background: #fff; border-left: 5px solid #ddd; transition: 0.3s; }
+        .q-original { font-style: italic; color: #666; margin-bottom: 10px; display: block; font-size: 0.95em; }
+        .q-main { font-weight: bold; font-size: 1.05em; margin-bottom: 15px; color: var(--primary); }
+        
+        .input-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .start-word { font-weight: bold; color: var(--accent); background: #fdf2e9; padding: 5px 10px; border-radius: 4px; }
+        
+        input[type="text"] {
+            flex: 1; min-width: 300px; padding: 10px; border: 2px solid #ddd; border-radius: 5px; font-size: 1em; outline: none;
+        }
+        input:focus { border-color: var(--accent); }
+        
+        .result-info { margin-top: 10px; font-size: 0.9em; display: none; padding: 10px; border-radius: 5px; background: #f9f9f9; border: 1px solid #eee; }
+        .score-bar { height: 8px; background: #eee; border-radius: 4px; margin: 10px 0; overflow: hidden; display: none; }
+        .score-fill { height: 100%; transition: 0.5s; }
+
+        .controls { display: flex; gap: 15px; margin-top: 30px; }
+        button { flex: 1; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em; transition: 0.3s; }
+        #grade-btn { background: var(--primary); color: white; }
+        #next-btn { background: #3498db; color: white; }
+        button:hover { opacity: 0.9; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Sentence Transformation (68 Questions)</h1>
+    <div class="stats">
+        <span>Đã thuộc (>=90%): <span id="mastered-count">0</span>/68</span>
+        <span>Khớp trung bình: <span id="current-score">0%</span></span>
+    </div>
+
+    <div id="quiz-area"></div>
+
+    <div class="controls">
+        <button id="grade-btn" onclick="gradeBatch()">CHẤM ĐIỂM</button>
+        <button id="next-btn" onclick="initBatch()">5 CÂU TIẾP THEO (ƯU TIÊN CÂU SAI)</button>
+    </div>
+</div>
+
+<script>
+// NGÂN HÀNG 68 CÂU HỎI (40 CÂU CŨ + 28 CÂU MỚI)
+const sentenceBank = [
+    // --- 40 CÂU GỐC ---
+    {id:1, q:"We should reduce industrial waste, or the river will be dirty.", s:"If", a:"we don't reduce industrial waste, the river will be dirty", k:["don't reduce", "industrial waste", "river", "will be dirty"]},
+    {id:2, q:"It's a pity I can't speak English fluently.", s:"I wish", a:"I could speak English fluently", k:["could speak", "English", "fluently"]},
+    {id:3, q:"They will build a new bridge in this area next year.", s:"A new bridge", a:"will be built in this area next year", k:["will be built", "in this area", "next year"]},
+    {id:4, q:"'Do you like pop music?' she asked me.", s:"She asked me", a:"if I liked pop music", k:["if", "I liked", "pop music"]},
+    {id:5, q:"Because of the heavy rain, they stayed at home.", s:"Because", a:"it rained heavily, they stayed at home", k:["it rained", "heavily", "stayed at home"]},
+    {id:6, q:"The man is my teacher. He is talking to the principal.", s:"The man who", a:"is talking to the principal is my teacher", k:["is talking", "to the principal", "is my teacher"]},
+    {id:7, q:"Although he was tired, he finished his work.", s:"In spite of", a:"being tired, he finished his work", k:["being tired", "finished", "his work"]},
+    {id:8, q:"I haven't seen her for three years.", s:"The last time", a:"I saw her was three years ago", k:["I saw her", "was", "three years ago"]},
+    {id:9, q:"He spent two hours doing his homework.", s:"It took", a:"him two hours to do his homework", k:["him", "two hours", "to do", "homework"]},
+    {id:10, q:"I suggest going to the beach this weekend.", s:"Shall", a:"we go to the beach this weekend?", k:["we go", "to the beach", "this weekend"]},
+    {id:11, q:"This is the first time I have ever eaten this kind of food.", s:"I have never", a:"eaten this kind of food before", k:["never eaten", "this kind", "food", "before"]},
+    {id:12, q:"The girl is very beautiful. She lives next door.", s:"The girl who", a:"lives next door is very beautiful", k:["lives", "next door", "is", "beautiful"]},
+    {id:13, q:"They are going to paint the house tomorrow.", s:"The house", a:"is going to be painted tomorrow", k:["is going to", "be painted", "tomorrow"]},
+    {id:14, q:"'Where are you going?' he asked her.", s:"He asked her", a:"where she was going", k:["where", "she was going"]},
+    {id:15, q:"He is too short to reach the shelf.", s:"He is not", a:"tall enough to reach the shelf", k:["tall enough", "to reach", "shelf"]},
+    {id:16, q:"If you don't study hard, you will fail the exam.", s:"Unless", a:"you study hard, you will fail the exam", k:["you study hard", "will fail", "exam"]},
+    {id:17, q:"She didn't go to school because she was sick.", s:"Because of", a:"her sickness, she didn't go to school", k:["her sickness", "didn't go", "school"]},
+    {id:18, q:"We started learning English five years ago.", s:"We have", a:"learned English for five years", k:["have learned", "English", "for five years"]},
+    {id:19, q:"The water was so hot that I couldn't drink it.", s:"It was such", a:"hot water that I couldn't drink it", k:["such hot water", "that", "couldn't drink"]},
+    {id:20, q:"I'm sorry I don't have a computer.", s:"I wish", a:"I had a computer", k:["I had", "computer"]},
+    {id:21, q:"People speak English all over the world.", s:"English", a:"is spoken all over the world", k:["is spoken", "all over", "world"]},
+    {id:22, q:"He doesn't work as hard as his brother.", s:"His brother", a:"works harder than him", k:["works", "harder", "than him"]},
+    {id:23, q:"The bag was very heavy. I couldn't carry it.", s:"The bag was too", a:"heavy for me to carry", k:["heavy", "for me", "to carry"]},
+    {id:24, q:"In spite of the bad weather, they went for a picnic.", s:"Though", a:"the weather was bad, they went for a picnic", k:["weather was bad", "went for", "picnic"]},
+    {id:25, q:"He is the most intelligent student in the class.", s:"No one", a:"in the class is as intelligent as him", k:["in the class", "is as intelligent", "as him"]},
+    {id:26, q:"They have just cleaned the room.", s:"The room", a:"has just been cleaned", k:["has just", "been cleaned"]},
+    {id:27, q:"'I will help you,' he said to me.", s:"He told me", a:"he would help me", k:["he would", "help me"]},
+    {id:28, q:"She is too young to watch this movie.", s:"She is not", a:"old enough to watch this movie", k:["not old enough", "to watch", "movie"]},
+    {id:29, q:"The car is very expensive. My father can't buy it.", s:"The car is so", a:"expensive that my father can't buy it", k:["so expensive", "that", "can't buy"]},
+    {id:30, q:"I suggest that you should take a umbrella.", s:"How about", a:"taking a umbrella?", k:["taking", "an umbrella"]},
+    {id:31, q:"The students are planting trees in the school yard.", s:"Trees", a:"are being planted in the school yard", k:["are being", "planted", "school yard"]},
+    {id:32, q:"He can't drive a car.", s:"He wishes", a:"he could drive a car", k:["he could", "drive", "car"]},
+    {id:33, q:"We must protect our environment.", s:"Our environment", a:"must be protected", k:["must be", "protected"]},
+    {id:34, q:"It's high time you went to bed.", s:"You should", a:"go to bed now", k:["go to", "bed", "now"]},
+    {id:35, q:"They didn't arrive on time because of the traffic jam.", s:"Because", a:"there was a traffic jam, they didn't arrive on time", k:["there was", "traffic jam", "didn't arrive"]},
+    {id:36, q:"The man is my uncle. You met him yesterday.", s:"The man whom", a:"you met yesterday is my uncle", k:["you met", "yesterday", "is my uncle"]},
+    {id:37, q:"He is such a good student that everyone likes him.", s:"He is so", a:"good a student that everyone likes him", k:["so good", "that", "everyone likes"]},
+    {id:38, q:"We should plant more trees.", s:"I suggest", a:"more trees should be planted", k:["more trees", "should be", "planted"]},
+    {id:39, q:"I haven't been to Hanoi for two years.", s:"It's two years", a:"since I last went to Hanoi", k:["since", "I last went", "Hanoi"]},
+    {id:40, q:"To study English is very important.", s:"It is", a:"very important to study English", k:["very important", "to study", "English"]},
+
+    // --- 28 CÂU MỚI (Từ Source 1) ---
+    {id:41, q:"'Are you going to make a small home for birds in your yard?' She asked us.", s:"She asked us", a:"if we were going to make a small home for birds in our yard", k:["if", "we were going to", "make", "home for birds", "our yard"]},
+    {id:42, q:"Take responsibility for your actions, or people won't respect you.", s:"If", a:"you don't take responsibility for your actions, people won't respect you", k:["don't take", "responsibility", "actions", "won't respect"]},
+    {id:43, q:"My children became familiar with their new school after a few days.", s:"My children got", a:"used to their new school after a few days", k:["used to", "their new school", "after a few days"]},
+    {id:44, q:"I haven't ridden my bike around the village for many years.", s:"The last time", a:"I rode my bike around the village was many years ago", k:["I rode", "my bike", "was many years ago"]},
+    {id:45, q:"He often checks example sentences in his dictionary to understand how a word is used.", s:"He often looks", a:"up example sentences in his dictionary to understand how a word is used", k:["up", "example sentences", "understand", "word is used"]},
+    {id:46, q:"She started to review her notes to get better grades two weeks ago.", s:"She has", a:"been reviewing her notes to get better grades for two weeks", k:["been reviewing", "notes", "get better grades", "for two weeks"]},
+    {id:47, q:"I really want to learn how to dance because it looks fun.", s:"I'm keen", a:"on learning how to dance because it looks fun", k:["on learning", "how to dance", "looks fun"]},
+    {id:48, q:"Kevin feels bad about not visiting his grandparents next month.", s:"Kevin wishes", a:"he would visit his grandparents next month", k:["he would visit", "his grandparents", "next month"]},
+    {id:49, q:"'Did you wear your new sports shoes to practise running last night?' Lucy asked Trung.", s:"Lucy asked Trung", a:"if he had worn his new sports shoes to practise running the night before", k:["if he had worn", "sports shoes", "practise running", "the night before"]},
+    {id:50, q:"It was such an interesting app that millions of users downloaded it.", s:"The app", a:"was so interesting that millions of users downloaded it", k:["was so interesting", "that", "millions of users", "downloaded it"]},
+    {id:51, q:"We have never volunteered to clean up the local beach before.", s:"This is", a:"the first time we have volunteered to clean up the local beach", k:["the first time", "have volunteered", "clean up", "local beach"]},
+    {id:52, q:"My brother saw a lot of athletes in the stadium yesterday.", s:"A lot of", a:"athletes were seen in the stadium by my brother yesterday", k:["athletes", "were seen", "stadium", "yesterday"]},
+    {id:53, q:"He couldn't hide the truth from his best friend any longer.", s:"The truth", a:"couldn't be hidden from his best friend any longer", k:["couldn't be hidden", "from his best friend", "any longer"]},
+    {id:54, q:"She chose to study medicine because of the realistic VR surgery practice.", s:"Because the", a:"VR surgery practice was realistic, she chose to study medicine", k:["VR surgery practice", "was realistic", "chose to study", "medicine"]},
+    {id:55, q:"'I will see you again at the festival next month,' Liam said to Mia.", s:"Liam told", a:"Mia he would see her again at the festival the following month", k:["Mia", "he would see", "festival", "the following month"]},
+    {id:56, q:"Sophia often checks her shopping list carefully before leaving the house.", s:"Sophia often goes", a:"over her shopping list carefully before leaving the house", k:["over", "shopping list", "carefully", "before leaving"]},
+    {id:57, q:"Kim regrets that she is too short to play basketball.", s:"Kim wishes", a:"she were tall enough to play basketball", k:["she were", "tall enough", "play basketball"]},
+    {id:58, q:"My brother can't wait to experience the thrill of paragliding over the ocean.", s:"My brother looks", a:"forward to experiencing the thrill of paragliding over the ocean", k:["forward to", "experiencing", "thrill", "paragliding"]},
+    {id:59, q:"Although shelters are available, many homeless people choose to stay on the street.", s:"Despite the", a:"availability of shelters, many homeless people choose to stay on the street", k:["availability of shelters", "homeless people", "stay on the street"]},
+    {id:60, q:"'Where do you keep your medicine when someone in your family is sick?' I asked Tracy.", s:"I asked", a:"Tracy where she kept her medicine when someone in her family was sick", k:["Tracy where she kept", "medicine", "family was sick"]},
+    {id:61, q:"She couldn't text me back because she forgot to pay for more call credit.", s:"She forgot to top", a:"up her call credit, so she couldn't text me back", k:["up her call credit", "couldn't text", "back"]},
+    {id:62, q:"When I was younger, I would often spend hours building castles with Lego.", s:"I used", a:"to spend hours building castles with Lego when I was younger", k:["to spend", "building castles", "Lego", "younger"]},
+    {id:63, q:"The scientists found the new species by accident while studying plants.", s:"The scientists came", a:"across the new species while studying plants", k:["across", "new species", "studying plants"]},
+    {id:64, q:"The pastry was so soft that it crumbled in my hands.", s:"It was", a:"such a soft pastry that it crumbled in my hands", k:["such a soft pastry", "that", "crumbled", "my hands"]},
+    {id:65, q:"She thinks about her first job and realises how much she has grown.", s:"She looks", a:"back on her first job and realises how much she has grown", k:["back on", "first job", "realises", "grown"]},
+    {id:66, q:"She prefers to take the train because travelling by plane frightens her.", s:"She's frightened", a:"of travelling by plane, so she prefers to take the train", k:["of travelling", "by plane", "prefers", "take the train"]},
+    {id:67, q:"They will display a new collection of ancient artefacts next month.", s:"A", a:"new collection of ancient artefacts will be displayed next month", k:["new collection", "ancient artefacts", "will be displayed", "next month"]},
+    {id:68, q:"I started playing baseball every weekend after I joined the local club.", s:"I have", a:"played baseball every weekend since I joined the local club", k:["played baseball", "every weekend", "since I joined"]}
+];
+
+let weights = JSON.parse(localStorage.getItem('rewrite_68_weights')) || {};
+sentenceBank.forEach(q => { if(weights[q.id] === undefined) weights[q.id] = 100; });
+
+let currentBatch = [];
+
+function initBatch() {
+    // Sắp xếp lấy 5 câu có trọng số cao nhất (hay sai nhất)
+    const sorted = [...sentenceBank].sort((a, b) => weights[b.id] - weights[a.id]);
+    currentBatch = sorted.slice(0, 5);
+    
+    const area = document.getElementById('quiz-area');
+    area.innerHTML = '';
+    
+    currentBatch.forEach((q, idx) => {
+        const div = document.createElement('div');
+        div.className = 'question-box';
+        div.innerHTML = `
+            <span class="q-original">Câu gốc: ${q.q}</span>
+            <div class="q-main">Câu ${q.id}: Viết lại bắt đầu với <b>${q.s}...</b></div>
+            <div class="input-group">
+                <span class="start-word">${q.s}</span>
+                <input type="text" id="ans-${q.id}" placeholder="Nhập tiếp phần còn lại...">
+            </div>
+            <div class="score-bar" id="bar-container-${q.id}"><div class="score-fill" id="fill-${q.id}"></div></div>
+            <div class="result-info" id="info-${q.id}"></div>
+        `;
+        area.appendChild(div);
+    });
+    updateMasteryUI();
+    window.scrollTo(0, 0);
+}
+
+function gradeBatch() {
+    let totalPercent = 0;
+    currentBatch.forEach(q => {
+        const input = document.getElementById(`ans-${q.id}`);
+        const info = document.getElementById(`info-${q.id}`);
+        const bar = document.getElementById(`bar-container-${q.id}`);
+        const fill = document.getElementById(`fill-${q.id}`);
+        
+        const userVal = input.value.trim().toLowerCase();
+        let matchCount = 0;
+        
+        // Logic so khớp từ khóa
+        q.k.forEach(keyword => {
+            if(userVal.includes(keyword.toLowerCase())) matchCount++;
+        });
+        
+        const percent = Math.round((matchCount / q.k.length) * 100);
+        totalPercent += percent;
+
+        bar.style.display = 'block';
+        info.style.display = 'block';
+        fill.style.width = percent + '%';
+        
+        // Màu sắc dựa trên % đúng
+        if(percent >= 90) fill.style.background = 'var(--success)';
+        else if(percent >= 50) fill.style.background = 'var(--accent)';
+        else fill.style.background = 'var(--danger)';
+        
+        info.innerHTML = `
+            <div style="margin-bottom: 5px;">🎯 Độ khớp: <b>${percent}%</b></div>
+            <div style="color: #2c3e50; font-size: 0.95em;">💡 Gợi ý: <b>${q.s} ${q.a}</b></div>
+        `;
+        
+        // Cập nhật trọng số vào bộ nhớ
+        if(percent >= 90) {
+            weights[q.id] = Math.max(0, weights[q.id] - 40);
+        } else {
+            weights[q.id] = Math.min(100, weights[q.id] + 20);
+        }
+    });
+
+    document.getElementById('current-score').innerText = Math.round(totalPercent/5) + "%";
+    localStorage.setItem('rewrite_68_weights', JSON.stringify(weights));
+    updateMasteryUI();
+}
+
+function updateMasteryUI() {
+    // Câu được coi là "thuộc" nếu trọng số còn dưới 25%
+    const mastered = Object.values(weights).filter(w => w <= 25).length;
+    document.getElementById('mastered-count').innerText = mastered;
+}
+
+// Chạy khởi tạo
+initBatch();
+</script>
+</body>
+</html>
